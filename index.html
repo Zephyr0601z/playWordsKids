@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PlayWords Kids</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section id="loginScreen" class="login-screen" aria-label="login">
+        <div class="login-hero" aria-hidden="true">
+          <span class="login-sun"></span>
+          <span class="login-cloud one"></span>
+          <span class="login-cloud two"></span>
+          <div class="login-buddy">
+            <span>Hi!</span>
+          </div>
+        </div>
+        <div class="login-panel">
+          <div class="brand login-brand">
+            <span class="brand-mark" aria-hidden="true">P</span>
+            <div>
+              <h1>PlayWords Kids</h1>
+              <p>玩中学英语</p>
+            </div>
+          </div>
+          <label class="name-field" for="kidName">
+            <span>Name</span>
+            <input id="kidName" type="text" maxlength="14" placeholder="Lily" autocomplete="name" />
+          </label>
+          <button id="loginBtn" class="login-button">Start</button>
+          <button id="guestBtn" class="guest-button">Guest Mode</button>
+        </div>
+      </section>
+
+      <section id="appStage" class="stage hidden" aria-label="PlayWords Kids">
+        <header class="topbar">
+          <div class="brand">
+            <span class="brand-mark" aria-hidden="true">P</span>
+            <div>
+              <h1>PlayWords Kids</h1>
+              <p id="profileText">Learn Through Play</p>
+            </div>
+          </div>
+          <div class="top-actions">
+            <button id="switchUserBtn" class="mini-button">Switch</button>
+            <div class="progress-pill" aria-label="lesson progress">
+              <span id="starCount">0</span>
+              <span aria-hidden="true">★</span>
+            </div>
+          </div>
+        </header>
+
+        <nav class="mode-tabs" aria-label="learning games">
+          <button class="tab active" data-screen="home">Home</button>
+          <button class="tab" data-screen="lesson">Play</button>
+          <button class="tab" data-screen="sound">Sound</button>
+          <button class="tab" data-screen="match">Match</button>
+          <button class="tab" data-screen="mole">Tap</button>
+        </nav>
+
+        <section id="home" class="screen active-screen">
+          <div class="home-grid">
+            <article class="continue-panel">
+              <span id="homeLessonTag">Lesson 1</span>
+              <h2 id="homeLessonTitle">Hello Animals</h2>
+              <p id="homeLessonStatus">0/4 words</p>
+              <button id="continueBtn" class="big-action listen">Continue</button>
+            </article>
+            <article class="today-panel">
+              <div class="panel-title">
+                <span>Today</span>
+                <strong>New Words</strong>
+              </div>
+              <div id="todayWords" class="mini-word-grid"></div>
+            </article>
+            <article class="review-panel">
+              <div class="panel-title">
+                <span>Review</span>
+                <strong id="reviewCount">0 learned</strong>
+              </div>
+              <button id="reviewBtn" class="big-action repeat">Review</button>
+            </article>
+            <article class="map-panel">
+              <div class="panel-title">
+                <span>Plan</span>
+                <strong>Course Map</strong>
+              </div>
+              <div id="courseMap" class="course-map"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="lesson" class="screen">
+          <div class="lesson-grid">
+            <article class="character-zone">
+              <div id="buddy" class="buddy wave" aria-hidden="true">
+                <span class="ear left"></span>
+                <span class="ear right"></span>
+                <span class="face">
+                  <span class="eye left"></span>
+                  <span class="eye right"></span>
+                  <span class="smile"></span>
+                </span>
+                <span class="arm left"></span>
+                <span class="arm right"></span>
+                <span class="foot left"></span>
+                <span class="foot right"></span>
+              </div>
+              <div class="speech">
+                <span id="wordText">Cat</span>
+                <strong id="wordChinese">小猫</strong>
+                <small id="wordHint">Tap, listen, copy!</small>
+              </div>
+            </article>
+
+            <article class="word-play">
+              <div class="lesson-plan">
+                <div>
+                  <span id="lessonTag">Lesson 1</span>
+                  <h2 id="lessonTitle">Hello Animals</h2>
+                </div>
+                <div id="lessonProgress" class="lesson-progress">0/4</div>
+              </div>
+              <div class="lesson-steps" aria-label="lesson steps">
+                <span class="step-dot active"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+              </div>
+              <div id="wordCards" class="word-card-grid"></div>
+            </article>
+          </div>
+
+          <div class="action-row">
+            <button id="listenBtn" class="big-action listen">Listen</button>
+            <button id="repeatBtn" class="big-action repeat">Repeat</button>
+            <button id="manualDoneBtn" class="big-action manual hidden">I Said It</button>
+            <button id="nextLessonBtn" class="big-action next" disabled>Next</button>
+          </div>
+        </section>
+
+        <section id="sound" class="screen">
+          <div id="soundBoard" class="sound-board"></div>
+          <div class="sound-game">
+            <h2 id="soundPrompt">Find “B” sound</h2>
+            <div id="soundChoices" class="animal-row"></div>
+          </div>
+        </section>
+
+        <section id="match" class="screen">
+          <div class="match-area">
+            <div id="dragBank" class="drag-bank" aria-label="words to drag"></div>
+            <div id="dropGrid" class="drop-grid" aria-label="picture targets"></div>
+          </div>
+        </section>
+
+        <section id="mole" class="screen">
+          <div class="mole-header">
+            <button id="molePrompt" class="big-action listen">Hear Word</button>
+            <span id="targetWord">Cat</span>
+          </div>
+          <div id="moleGrid" class="mole-grid"></div>
+        </section>
+      </section>
+
+      <div id="rewardOverlay" class="reward-overlay hidden" aria-live="polite">
+        <div class="reward-pop">
+          <span class="reward-star" aria-hidden="true">★</span>
+          <strong>Great!</strong>
+          <small id="rewardText">You said it!</small>
+        </div>
+      </div>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
