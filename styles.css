@@ -1388,11 +1388,13 @@ h1 {
 }
 
 .match-area {
+  position: relative;
   display: grid;
   grid-template-columns: 0.8fr 1.2fr;
   gap: 18px;
   min-height: 500px;
   padding: 18px;
+  overflow: hidden;
 }
 
 .drag-bank {
@@ -1450,6 +1452,67 @@ h1 {
   border-style: solid;
   border-color: #25ad6a;
   background: #dcffe9;
+}
+
+.match-plane-reward {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(158, 231, 255, 0.18), rgba(255, 253, 247, 0));
+}
+
+.reward-plane {
+  position: absolute;
+  left: 13%;
+  bottom: 8%;
+  font-size: clamp(4.5rem, 12vw, 8.5rem);
+  filter: drop-shadow(0 18px 20px rgba(39, 49, 79, 0.18));
+  transform: translate(-120px, 110px) rotate(-18deg);
+}
+
+.plane-trail {
+  position: absolute;
+  left: 6%;
+  bottom: 12%;
+  width: min(360px, 56vw);
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow:
+    0 22px 0 rgba(255, 255, 255, 0.48),
+    0 -22px 0 rgba(255, 255, 255, 0.36);
+  opacity: 0;
+  transform: rotate(-18deg) scaleX(0.2);
+  transform-origin: left center;
+}
+
+.match-plane-reward strong {
+  align-self: end;
+  margin-bottom: 28px;
+  padding: 10px 18px;
+  border-radius: 18px;
+  color: #704b00;
+  background: var(--sun);
+  font-size: 1.6rem;
+  font-weight: 1000;
+  box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.1), 0 12px 22px rgba(39, 49, 79, 0.14);
+  opacity: 0;
+  transform: translateY(18px) scale(0.86);
+}
+
+.match-plane-reward.fly .reward-plane {
+  animation: planeTakeoff 2.4s cubic-bezier(0.18, 0.74, 0.28, 1) forwards;
+}
+
+.match-plane-reward.fly .plane-trail {
+  animation: planeTrail 1.8s ease-out forwards;
+}
+
+.match-plane-reward.fly strong {
+  animation: planeMessage 1.8s ease 0.35s forwards;
 }
 
 .mole-header {
@@ -1959,6 +2022,54 @@ h1 {
 @keyframes pulse {
   50% {
     transform: scale(1.03);
+  }
+}
+
+@keyframes planeTakeoff {
+  0% {
+    opacity: 0;
+    transform: translate(-120px, 110px) rotate(-18deg) scale(0.72);
+  }
+  16% {
+    opacity: 1;
+  }
+  58% {
+    opacity: 1;
+    transform: translate(38vw, -24vh) rotate(-18deg) scale(1.04);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(82vw, -78vh) rotate(-16deg) scale(0.7);
+  }
+}
+
+@keyframes planeTrail {
+  0% {
+    opacity: 0;
+    transform: rotate(-18deg) scaleX(0.15);
+  }
+  22% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(-18deg) scaleX(1);
+  }
+}
+
+@keyframes planeMessage {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.86);
+  }
+  30%,
+  72% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.94);
   }
 }
 
@@ -2484,6 +2595,16 @@ h1 {
 
   .drop-zone {
     min-height: 132px;
+  }
+
+  .reward-plane {
+    font-size: 4.4rem;
+  }
+
+  .match-plane-reward strong {
+    margin-bottom: 18px;
+    border-radius: 16px;
+    font-size: 1.1rem;
   }
 
   .mole-grid {

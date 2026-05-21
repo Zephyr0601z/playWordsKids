@@ -434,6 +434,7 @@ let preferredEnglishVoice = null;
 let preferredChineseVoice = null;
 let chantTimers = [];
 let chantRunId = 0;
+let matchPlaneTimer = null;
 
 const appStage = document.querySelector("#appStage");
 const loginScreen = document.querySelector("#loginScreen");
@@ -474,6 +475,7 @@ const completeWordCount = document.querySelector("#completeWordCount");
 const completeLessonCount = document.querySelector("#completeLessonCount");
 const completeStarCount = document.querySelector("#completeStarCount");
 const finalWordParade = document.querySelector("#finalWordParade");
+const matchPlaneReward = document.querySelector("#matchPlaneReward");
 const homeLessonTag = document.querySelector("#homeLessonTag");
 const homeLessonTitle = document.querySelector("#homeLessonTitle");
 const homeLessonStatus = document.querySelector("#homeLessonStatus");
@@ -1433,6 +1435,7 @@ function renderSoundGame() {
 
 function renderMatchGame() {
   const round = currentLessonWords();
+  hideMatchPlaneReward();
   document.querySelector("#dragBank").innerHTML = round
     .map((item) => `<button class="drag-word" draggable="true" data-match="${item.word}">${item.word}<small>${item.zh}</small></button>`)
     .join("");
@@ -1482,7 +1485,34 @@ function renderMatchGame() {
   });
 }
 
+function hideMatchPlaneReward() {
+  if (!matchPlaneReward) return;
+  window.clearTimeout(matchPlaneTimer);
+  matchPlaneReward.classList.add("hidden");
+  matchPlaneReward.classList.remove("fly");
+}
+
+function showMatchPlaneReward() {
+  if (!matchPlaneReward || matchPlaneReward.classList.contains("fly")) return;
+  matchPlaneReward.classList.remove("hidden");
+  matchPlaneReward.classList.remove("fly");
+  requestAnimationFrame(() => matchPlaneReward.classList.add("fly"));
+  speak("Great match. The plane is flying high!", { rate: 0.72, pitch: 1.28 });
+  matchPlaneTimer = window.setTimeout(() => {
+    matchPlaneReward.classList.add("hidden");
+    matchPlaneReward.classList.remove("fly");
+  }, 2600);
+}
+
+function maybeCompleteMatchRound() {
+  const zones = Array.from(document.querySelectorAll(".drop-zone"));
+  if (zones.length && zones.every((item) => item.classList.contains("done"))) {
+    showMatchPlaneReward();
+  }
+}
+
 function checkMatch(zone, incoming) {
+  if (zone.classList.contains("done")) return;
   const word = currentLessonWords().find((item) => item.word === incoming);
   if (incoming === zone.dataset.match) {
     zone.classList.add("done", "happy");
@@ -1494,6 +1524,7 @@ function checkMatch(zone, incoming) {
     speak(`Yes, ${incoming}. Well done!`, { rate: 0.74, pitch: 1.26 });
     if (word) window.setTimeout(() => speakChinese(word.zh), 1200);
     addStar();
+    maybeCompleteMatchRound();
   } else {
     zone.classList.add("wrong");
     window.setTimeout(() => zone.classList.remove("wrong"), 350);
