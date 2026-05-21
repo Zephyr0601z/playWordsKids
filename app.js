@@ -598,7 +598,7 @@ function speakChinese(text, options = {}) {
 }
 
 async function speakWordWithMeaning(word) {
-  await speakChinese(`中文意思：${word.zh}`, { rate: 0.76, pitch: 1.08 });
+  await speakChinese(word.zh, { rate: 0.76, pitch: 1.08 });
   await new Promise((resolve) => window.setTimeout(resolve, 420));
   speak(word.word, { rate: 0.68, pitch: 1.32 });
 }
@@ -632,14 +632,20 @@ function getWordExpression(word) {
 
 function chantMeaningText(word, expression) {
   const knownMeanings = {
-    Cat: "中文意思：小猫，小猫，像这样拍拍手。",
-    Dog: "中文意思：小狗，小狗，说 hello。",
-    Bird: "中文意思：小鸟，小鸟，飞得高高。",
-    Fish: "中文意思：小鱼，小鱼，游呀游。",
-    Book: "中文意思：书，书，看一看。",
-    Ball: "中文意思：球，球，弹一弹。",
+    Cat: "小猫，小猫，像这样拍拍手。",
+    Dog: "小狗，小狗，说 hello。",
+    Bird: "小鸟，小鸟，飞得高高。",
+    Fish: "小鱼，小鱼，游呀游。",
+    Book: "书，书，看一看。",
+    Ball: "球，球，弹一弹。",
   };
-  return knownMeanings[word.word] || `中文意思：这是一句关于“${word.zh}”的节奏口令，跟着节拍记住 ${word.word}。`;
+  return knownMeanings[word.word] || `这是一句关于“${word.zh}”的节奏口令，跟着节拍记住 ${word.word}。`;
+}
+
+function expressionChineseText(word, type) {
+  if (type === "phrase") return `${word.zh}的常用短语`;
+  if (type === "scene") return `含有${word.zh}的场景句`;
+  return word.zh;
 }
 
 function chantBeatsFor(text) {
@@ -704,6 +710,14 @@ async function playChant() {
   if (runId !== chantRunId) return;
   beatItems.forEach((item) => item.classList.remove("active"));
   chantCard?.classList.remove("playing");
+}
+
+async function playExpression(type) {
+  const expression = getWordExpression(selectedWord);
+  const text = expression[type];
+  await speakChinese(expressionChineseText(selectedWord, type), { rate: 0.76, pitch: 1.08 });
+  await new Promise((resolve) => window.setTimeout(resolve, 420));
+  speak(text, { rate: type === "phrase" ? 0.68 : 0.72, pitch: 1.24 });
 }
 
 function showReward(word) {
@@ -1218,15 +1232,13 @@ wordChineseBtn.addEventListener("click", () => speakChinese(selectedWord.zh));
 
 document.querySelectorAll(".expression-card").forEach((card) => {
   card.addEventListener("click", () => {
-    const expression = getWordExpression(selectedWord);
     if (card.dataset.say === "chant") {
       playChant();
       return;
     }
-    const text = expression[card.dataset.say];
     card.classList.remove("pop");
     requestAnimationFrame(() => card.classList.add("pop"));
-    speak(text);
+    playExpression(card.dataset.say);
   });
 });
 
