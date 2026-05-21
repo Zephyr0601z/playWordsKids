@@ -786,6 +786,7 @@ const chantTailChinese = {
   "buzz with me": "和我一起嗡嗡叫。",
   "quack quack": "嘎嘎叫。",
   "tap the peg": "轻轻敲一敲。",
+  "peel and eat": "剥开来吃。",
   "sweet and cool": "甜甜又凉凉。",
   "very nice": "非常好。",
   "crunchy bite": "咔嚓咬一口。",
@@ -831,6 +832,8 @@ const chantTailChinese = {
 
 const chantWordChinese = {
   say: "说",
+  and: "",
+  peel: "剥开",
   touch: "摸摸",
   your: "你的",
   head: "头",
