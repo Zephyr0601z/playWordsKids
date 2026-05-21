@@ -649,10 +649,6 @@ h1 {
   box-shadow: inset 0 -5px 0 rgba(39, 49, 79, 0.07);
 }
 
-.sticker span {
-  font-size: 1.8rem;
-}
-
 .sticker small {
   font-size: 0.74rem;
   font-weight: 1000;
@@ -710,10 +706,6 @@ h1 {
   border-radius: 18px;
   background: var(--white);
   box-shadow: inset 0 -6px 0 rgba(39, 49, 79, 0.08);
-}
-
-.mini-word span {
-  font-size: 2.3rem;
 }
 
 .mini-word strong {
@@ -1230,15 +1222,89 @@ h1 {
   background: #effff4;
 }
 
-.emoji {
-  font-size: 3.5rem;
-  line-height: 1;
-}
-
 .word-copy {
   display: grid;
   gap: 4px;
   text-align: left;
+}
+
+.word-art {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.word-art.tiny {
+  width: 36px;
+  height: 36px;
+}
+
+.word-art.small {
+  width: 48px;
+  height: 48px;
+}
+
+.word-art.large {
+  width: 76px;
+  height: 76px;
+}
+
+.word-art.xlarge {
+  width: min(128px, 74%);
+  height: min(128px, 74%);
+}
+
+.word-art svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 8px 10px rgba(39, 49, 79, 0.12));
+}
+
+.art-bg {
+  fill: var(--art-secondary);
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 5;
+}
+
+.art-sun,
+.art-dot,
+.art-spark {
+  fill: var(--art-primary);
+}
+
+.art-ear,
+.art-shape,
+.art-cloud,
+.art-wing,
+.art-leaf,
+.art-orbit {
+  fill: rgba(255, 255, 255, 0.72);
+  stroke: var(--art-primary);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.art-wave,
+.art-smile {
+  fill: none;
+  stroke: var(--art-primary);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.word-art text {
+  fill: var(--ink);
+  font-size: 34px;
+  font-weight: 1000;
+  dominant-baseline: central;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.8);
+  stroke-width: 5px;
 }
 
 .word-copy small,
@@ -1375,12 +1441,6 @@ h1 {
   gap: 6px;
 }
 
-.animal-choice span,
-.mole span {
-  font-size: 3.5rem;
-  line-height: 1;
-}
-
 .animal-choice strong,
 .mole strong {
   font-size: 1.25rem;
@@ -1437,10 +1497,6 @@ h1 {
   border: 4px dashed rgba(39, 49, 79, 0.28);
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.58);
-}
-
-.drop-zone span {
-  font-size: 5.2rem;
 }
 
 .drop-zone.ready {
@@ -2075,7 +2131,7 @@ h1 {
 }
 
 .final-word-parade b {
-  font-size: 1.45rem;
+  font-size: 0.9rem;
   line-height: 1;
 }
 
@@ -2802,8 +2858,14 @@ h1 {
     padding: 12px 18px;
   }
 
-  .emoji {
-    font-size: 3.3rem;
+  .word-art.large {
+    width: 66px;
+    height: 66px;
+  }
+
+  .word-art.xlarge {
+    width: 96px;
+    height: 96px;
   }
 
   .sound-board {
@@ -2820,11 +2882,6 @@ h1 {
   .animal-choice,
   .mole {
     min-height: 104px;
-  }
-
-  .animal-choice span,
-  .mole span {
-    font-size: 3rem;
   }
 
   .drop-zone {

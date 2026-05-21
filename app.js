@@ -594,6 +594,59 @@ function sample(items, count) {
   return [...items].sort(() => Math.random() - 0.5).slice(0, count);
 }
 
+function wordSection(word) {
+  return lessons.find((lesson) => lesson.words.some((item) => item.word === word.word))?.section || "Core";
+}
+
+const artPalettes = {
+  Animals: ["#ff7e79", "#ffd45f"],
+  Food: ["#25ad6a", "#ffd45f"],
+  Actions: ["#1ba6f7", "#8ff0bd"],
+  Home: ["#ca5cff", "#9ee7ff"],
+  Colors: ["#ff7e79", "#ca5cff"],
+  Numbers: ["#ffd45f", "#1ba6f7"],
+  Family: ["#ff7e79", "#f1d7ff"],
+  Body: ["#8ff0bd", "#1ba6f7"],
+  Feelings: ["#ffd45f", "#ff7e79"],
+  Clothes: ["#ca5cff", "#ffd45f"],
+  Weather: ["#1ba6f7", "#9ee7ff"],
+  Shapes: ["#25ad6a", "#ca5cff"],
+  School: ["#ffd45f", "#8ff0bd"],
+  Nature: ["#25ad6a", "#9ee7ff"],
+  Transport: ["#1ba6f7", "#ff7e79"],
+  Polite: ["#ffd45f", "#ff7e79"],
+  Core: ["#9ee7ff", "#ffd45f"],
+};
+
+function artMotif(section, action) {
+  if (section === "Animals") return `<circle class="art-ear left" cx="34" cy="30" r="12" /><circle class="art-ear right" cx="66" cy="30" r="12" /><path class="art-smile" d="M38 62 Q50 72 62 62" />`;
+  if (section === "Food") return `<path class="art-leaf" d="M65 24 C82 20 88 34 72 45 C62 52 54 41 65 24Z" /><circle class="art-dot" cx="38" cy="68" r="5" />`;
+  if (section === "Weather") return `<path class="art-cloud" d="M27 64 H73 C84 64 84 49 72 49 C69 35 49 35 45 49 C34 43 22 51 27 64Z" />`;
+  if (section === "Transport") return `<path class="art-wing" d="M25 61 L78 35 L64 68 L87 80 L74 90 L55 75 L38 84 Z" />`;
+  if (section === "Nature") return `<path class="art-leaf" d="M31 72 C48 25 76 25 82 70 C62 62 48 65 31 72Z" />`;
+  if (section === "Shapes") return `<rect class="art-shape" x="28" y="34" width="44" height="44" rx="10" transform="rotate(12 50 56)" />`;
+  if (section === "Numbers") return `<circle class="art-orbit" cx="50" cy="56" r="30" /><circle class="art-dot" cx="77" cy="42" r="6" />`;
+  if (action === "flap") return `<path class="art-wing" d="M23 58 C37 35 53 38 48 68 C37 70 29 66 23 58Z" /><path class="art-wing" d="M77 58 C63 35 47 38 52 68 C63 70 71 66 77 58Z" />`;
+  if (action === "swim") return `<path class="art-wave" d="M24 67 C34 55 44 79 54 67 C64 55 74 79 84 67" />`;
+  return `<circle class="art-dot" cx="74" cy="32" r="7" /><path class="art-spark" d="M24 35 L31 48 L45 51 L34 60 L36 74 L24 67 L12 74 L14 60 L3 51 L17 48Z" />`;
+}
+
+function wordArt(word, size = "medium") {
+  const section = wordSection(word);
+  const [primary, secondary] = artPalettes[section] || artPalettes.Core;
+  const letter = (word.letter || word.word[0] || "?").slice(0, 2).toUpperCase();
+  return `
+    <span class="word-art ${size}" aria-hidden="true" style="--art-primary:${primary};--art-secondary:${secondary}">
+      <svg viewBox="0 0 100 100" focusable="false">
+        <rect class="art-bg" x="8" y="8" width="84" height="84" rx="24" />
+        <circle class="art-sun" cx="75" cy="24" r="10" />
+        ${artMotif(section, word.action)}
+        <text x="50" y="62" text-anchor="middle">${letter}</text>
+      </svg>
+    </span>
+  `;
+}
+
 function chooseFriendlyVoice(lang = "en") {
   if (!("speechSynthesis" in window)) return null;
   if (lang === "zh" && preferredChineseVoice) return preferredChineseVoice;
@@ -1146,7 +1199,7 @@ function showCourseComplete() {
   completeLessonCount.textContent = lessons.length;
   completeStarCount.textContent = stars;
   finalWordParade.innerHTML = sample(courseWords, 8)
-    .map((word) => `<span><b>${word.emoji}</b>${word.word}</span>`)
+    .map((word) => `<span>${wordArt(word, "tiny")}<b>${word.word}</b></span>`)
     .join("");
   saveProgress();
   courseCompleteOverlay.classList.remove("hidden");
@@ -1349,7 +1402,7 @@ function renderLesson() {
     .map(
       (item, index) => `
         <button class="word-card ${index === 0 ? "active" : ""}" data-word="${item.word}">
-          <span class="emoji" aria-hidden="true">${item.emoji}</span>
+          ${wordArt(item, "large")}
           <span class="word-copy">
             <strong>${item.word}</strong>
             <small>${item.zh}</small>
@@ -1408,7 +1461,7 @@ function renderSoundGame() {
     .map(
       (item) => `
         <button class="animal-choice" data-answer="${item.word === correct.word ? "yes" : "no"}" data-word="${item.word}">
-          <span>${item.emoji}</span>
+          ${wordArt(item, "large")}
           <strong>${item.word}</strong>
           <small>${item.zh}</small>
         </button>
@@ -1440,7 +1493,7 @@ function renderMatchGame() {
     .map((item) => `<button class="drag-word" draggable="true" data-match="${item.word}">${item.word}<small>${item.zh}</small></button>`)
     .join("");
   document.querySelector("#dropGrid").innerHTML = sample(round, round.length)
-    .map((item) => `<button class="drop-zone" data-match="${item.word}"><span>${item.emoji}</span></button>`)
+    .map((item) => `<button class="drop-zone" data-match="${item.word}">${wordArt(item, "xlarge")}</button>`)
     .join("");
 
   selectedDragWord = null;
@@ -1611,7 +1664,7 @@ function renderMoleGame() {
   currentMoleTarget = sample(round, 1)[0].word;
   document.querySelector("#targetWord").textContent = currentMoleTarget;
   document.querySelector("#moleGrid").innerHTML = sample(round, round.length)
-    .map((item) => `<button class="mole" data-word="${item.word}"><span>${item.emoji}</span><strong>${item.word}</strong><small>${item.zh}</small></button>`)
+    .map((item) => `<button class="mole" data-word="${item.word}">${wordArt(item, "large")}<strong>${item.word}</strong><small>${item.zh}</small></button>`)
     .join("");
 
   document.querySelectorAll(".mole").forEach((mole) => {
@@ -1678,7 +1731,7 @@ function renderHome() {
     .map(
       (word, index) => `
         <button class="sticker ${learned.length || index === 0 ? "unlocked" : ""}" data-word="${word.word}">
-          <span>${word.emoji}</span>
+          ${wordArt(word, "small")}
           <small>${word.word}</small>
         </button>
       `
@@ -1688,7 +1741,7 @@ function renderHome() {
     .map(
       (word) => `
         <button class="mini-word" data-word="${word.word}">
-          <span>${word.emoji}</span>
+          ${wordArt(word, "small")}
           <div>
             <strong>${word.word}</strong>
             <small>${word.zh}</small>
