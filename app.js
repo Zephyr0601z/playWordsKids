@@ -599,49 +599,53 @@ function wordSection(word) {
 }
 
 const artPalettes = {
-  Animals: ["#ff7e79", "#ffd45f"],
-  Food: ["#25ad6a", "#ffd45f"],
-  Actions: ["#1ba6f7", "#8ff0bd"],
-  Home: ["#ca5cff", "#9ee7ff"],
-  Colors: ["#ff7e79", "#ca5cff"],
-  Numbers: ["#ffd45f", "#1ba6f7"],
-  Family: ["#ff7e79", "#f1d7ff"],
-  Body: ["#8ff0bd", "#1ba6f7"],
-  Feelings: ["#ffd45f", "#ff7e79"],
-  Clothes: ["#ca5cff", "#ffd45f"],
-  Weather: ["#1ba6f7", "#9ee7ff"],
-  Shapes: ["#25ad6a", "#ca5cff"],
-  School: ["#ffd45f", "#8ff0bd"],
-  Nature: ["#25ad6a", "#9ee7ff"],
-  Transport: ["#1ba6f7", "#ff7e79"],
-  Polite: ["#ffd45f", "#ff7e79"],
-  Core: ["#9ee7ff", "#ffd45f"],
+  Animals: ["#b86f5d", "#f5d7a6", "#fff4df"],
+  Food: ["#7aa66b", "#f3c978", "#fff2d2"],
+  Actions: ["#5f9fbd", "#d8eab5", "#fff6e8"],
+  Home: ["#b88a6b", "#e7c7a2", "#fff3df"],
+  Colors: ["#c66f73", "#dfb4c6", "#fff0df"],
+  Numbers: ["#ba8a3a", "#f2d16d", "#fff7d8"],
+  Family: ["#c07a69", "#f0c2ad", "#fff0e6"],
+  Body: ["#7ea68c", "#f0c7ae", "#fff1e2"],
+  Feelings: ["#d19a4a", "#f4d37d", "#fff5d7"],
+  Clothes: ["#8d84bb", "#dfc3d9", "#fff1e8"],
+  Weather: ["#6d9eb8", "#d9e7ef", "#fff7e6"],
+  Shapes: ["#7ba36d", "#d9c6ef", "#fff5df"],
+  School: ["#b58b4c", "#e5d19b", "#fff6dc"],
+  Nature: ["#6e9a68", "#d3df9c", "#fff5d9"],
+  Transport: ["#5f8fa8", "#e4b08e", "#fff1dc"],
+  Polite: ["#c48a5a", "#f2c881", "#fff2dc"],
+  Core: ["#7ba7b4", "#f2cf8f", "#fff5df"],
 };
 
 function artMotif(section, action) {
-  if (section === "Animals") return `<circle class="art-ear left" cx="34" cy="30" r="12" /><circle class="art-ear right" cx="66" cy="30" r="12" /><path class="art-smile" d="M38 62 Q50 72 62 62" />`;
-  if (section === "Food") return `<path class="art-leaf" d="M65 24 C82 20 88 34 72 45 C62 52 54 41 65 24Z" /><circle class="art-dot" cx="38" cy="68" r="5" />`;
-  if (section === "Weather") return `<path class="art-cloud" d="M27 64 H73 C84 64 84 49 72 49 C69 35 49 35 45 49 C34 43 22 51 27 64Z" />`;
-  if (section === "Transport") return `<path class="art-wing" d="M25 61 L78 35 L64 68 L87 80 L74 90 L55 75 L38 84 Z" />`;
-  if (section === "Nature") return `<path class="art-leaf" d="M31 72 C48 25 76 25 82 70 C62 62 48 65 31 72Z" />`;
-  if (section === "Shapes") return `<rect class="art-shape" x="28" y="34" width="44" height="44" rx="10" transform="rotate(12 50 56)" />`;
-  if (section === "Numbers") return `<circle class="art-orbit" cx="50" cy="56" r="30" /><circle class="art-dot" cx="77" cy="42" r="6" />`;
-  if (action === "flap") return `<path class="art-wing" d="M23 58 C37 35 53 38 48 68 C37 70 29 66 23 58Z" /><path class="art-wing" d="M77 58 C63 35 47 38 52 68 C63 70 71 66 77 58Z" />`;
-  if (action === "swim") return `<path class="art-wave" d="M24 67 C34 55 44 79 54 67 C64 55 74 79 84 67" />`;
-  return `<circle class="art-dot" cx="74" cy="32" r="7" /><path class="art-spark" d="M24 35 L31 48 L45 51 L34 60 L36 74 L24 67 L12 74 L14 60 L3 51 L17 48Z" />`;
+  if (section === "Animals") return `<circle class="art-ear left" cx="35" cy="34" r="12" /><circle class="art-ear right" cx="65" cy="34" r="12" /><ellipse class="art-body" cx="50" cy="57" rx="25" ry="21" /><path class="art-smile" d="M39 60 Q50 70 61 60" />`;
+  if (section === "Food") return `<path class="art-body" d="M32 67 C25 43 43 28 58 38 C73 31 83 49 70 70 C59 86 39 84 32 67Z" /><path class="art-leaf" d="M57 34 C70 20 82 28 69 40 C61 46 54 42 57 34Z" />`;
+  if (section === "Weather") return `<path class="art-cloud" d="M25 60 H75 C86 60 86 47 74 46 C70 32 50 32 46 47 C35 40 20 49 25 60Z" /><path class="art-rain" d="M36 71 L31 82 M52 70 L47 84 M68 71 L63 82" />`;
+  if (section === "Transport") return `<path class="art-wing" d="M20 59 L80 33 L66 65 L88 78 L75 88 L55 74 L36 83 Z" /><path class="art-line" d="M24 78 C39 72 54 65 70 55" />`;
+  if (section === "Nature") return `<path class="art-leaf" d="M28 73 C46 24 77 25 83 70 C62 61 46 65 28 73Z" /><path class="art-line" d="M43 72 C51 55 61 42 75 31" />`;
+  if (section === "Shapes") return `<rect class="art-shape" x="29" y="35" width="42" height="42" rx="11" transform="rotate(9 50 56)" /><circle class="art-dot" cx="29" cy="34" r="5" />`;
+  if (section === "Numbers") return `<circle class="art-orbit" cx="50" cy="55" r="29" /><path class="art-line" d="M30 68 C42 55 57 47 73 38" /><circle class="art-dot" cx="76" cy="40" r="6" />`;
+  if (action === "flap") return `<path class="art-wing" d="M22 58 C37 34 53 39 48 68 C37 71 29 66 22 58Z" /><path class="art-wing" d="M78 58 C63 34 47 39 52 68 C63 71 71 66 78 58Z" />`;
+  if (action === "swim") return `<path class="art-wave" d="M22 67 C33 55 43 79 54 67 C65 55 75 79 86 67" /><path class="art-wave soft" d="M30 78 C39 70 48 85 57 78 C66 70 74 85 83 78" />`;
+  return `<path class="art-spark" d="M24 35 L31 48 L45 51 L34 60 L36 74 L24 67 L12 74 L14 60 L3 51 L17 48Z" /><circle class="art-dot" cx="74" cy="34" r="7" />`;
 }
 
 function wordArt(word, size = "medium") {
   const section = wordSection(word);
-  const [primary, secondary] = artPalettes[section] || artPalettes.Core;
+  const [primary, secondary, paper] = artPalettes[section] || artPalettes.Core;
   const letter = (word.letter || word.word[0] || "?").slice(0, 2).toUpperCase();
   return `
-    <span class="word-art ${size}" aria-hidden="true" style="--art-primary:${primary};--art-secondary:${secondary}">
+    <span class="word-art ${size}" aria-hidden="true" style="--art-primary:${primary};--art-secondary:${secondary};--art-paper:${paper}">
       <svg viewBox="0 0 100 100" focusable="false">
+        <path class="art-shadow" d="M24 88 C39 96 67 96 82 87" />
         <rect class="art-bg" x="8" y="8" width="84" height="84" rx="24" />
-        <circle class="art-sun" cx="75" cy="24" r="10" />
+        <path class="art-hill" d="M15 75 C32 61 48 75 64 64 C75 57 84 63 91 70 L91 92 L15 92Z" />
+        <circle class="art-sun" cx="76" cy="25" r="9" />
+        <path class="art-doodle" d="M21 29 C28 24 33 25 38 29 M65 75 C72 73 78 76 82 81" />
         ${artMotif(section, word.action)}
-        <text x="50" y="62" text-anchor="middle">${letter}</text>
+        <rect class="art-letter-badge" x="35" y="73" width="30" height="18" rx="8" />
+        <text x="50" y="82" text-anchor="middle">${letter}</text>
       </svg>
     </span>
   `;

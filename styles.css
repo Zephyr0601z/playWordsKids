@@ -1261,50 +1261,89 @@ h1 {
   height: 100%;
   display: block;
   overflow: visible;
-  filter: drop-shadow(0 8px 10px rgba(39, 49, 79, 0.12));
+  filter: drop-shadow(0 10px 12px rgba(78, 55, 35, 0.13));
+}
+
+.art-shadow {
+  fill: none;
+  stroke: rgba(99, 71, 42, 0.14);
+  stroke-width: 8;
+  stroke-linecap: round;
 }
 
 .art-bg {
+  fill: var(--art-paper);
+  stroke: rgba(121, 83, 46, 0.24);
+  stroke-width: 3.5;
+}
+
+.art-hill {
   fill: var(--art-secondary);
-  stroke: rgba(255, 255, 255, 0.9);
-  stroke-width: 5;
+  opacity: 0.62;
 }
 
 .art-sun,
 .art-dot,
 .art-spark {
   fill: var(--art-primary);
+  opacity: 0.92;
+}
+
+.art-doodle {
+  fill: none;
+  stroke: rgba(121, 83, 46, 0.22);
+  stroke-width: 3;
+  stroke-linecap: round;
 }
 
 .art-ear,
+.art-body,
 .art-shape,
 .art-cloud,
 .art-wing,
 .art-leaf,
 .art-orbit {
-  fill: rgba(255, 255, 255, 0.72);
+  fill: rgba(255, 250, 238, 0.78);
   stroke: var(--art-primary);
-  stroke-width: 5;
+  stroke-width: 4.2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .art-wave,
-.art-smile {
+.art-smile,
+.art-rain,
+.art-line {
   fill: none;
   stroke: var(--art-primary);
-  stroke-width: 6;
+  stroke-width: 4.6;
   stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.art-wave.soft {
+  opacity: 0.48;
+  stroke-width: 3.4;
+}
+
+.art-letter-badge {
+  fill: rgba(255, 250, 238, 0.86);
+  stroke: rgba(121, 83, 46, 0.22);
+  stroke-width: 2;
 }
 
 .word-art text {
-  fill: var(--ink);
-  font-size: 34px;
+  fill: #6c4b2f;
+  font-size: 12px;
   font-weight: 1000;
   dominant-baseline: central;
   paint-order: stroke;
-  stroke: rgba(255, 255, 255, 0.8);
-  stroke-width: 5px;
+  stroke: rgba(255, 250, 238, 0.82);
+  stroke-width: 2px;
+}
+
+.word-art svg * {
+  vector-effect: non-scaling-stroke;
 }
 
 .word-copy small,
