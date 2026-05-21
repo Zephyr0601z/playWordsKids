@@ -33,6 +33,41 @@ const courseWords = [
   { word: "Toy", zh: "玩具", action: "wag", emoji: "🧸", letter: "T", sound: "t" },
 ];
 
+const wordExpressions = {
+  Cat: { phrase: "a little cat", scene: "I see a cat.", rhyme: "Cat, cat, clap like that." },
+  Dog: { phrase: "a happy dog", scene: "The dog can run.", rhyme: "Dog, dog, say hello." },
+  Bird: { phrase: "a blue bird", scene: "The bird can fly.", rhyme: "Bird, bird, fly high." },
+  Fish: { phrase: "a small fish", scene: "The fish can swim.", rhyme: "Fish, fish, swish, swish." },
+  Apple: { phrase: "a red apple", scene: "I like apples.", rhyme: "Apple, apple, yum, yum." },
+  Banana: { phrase: "a yellow banana", scene: "I eat a banana.", rhyme: "Banana, banana, peel and eat." },
+  Cake: { phrase: "a sweet cake", scene: "This cake is yummy.", rhyme: "Cake, cake, take a bite." },
+  Milk: { phrase: "a cup of milk", scene: "I drink milk.", rhyme: "Milk, milk, nice and white." },
+  Run: { phrase: "run fast", scene: "I can run.", rhyme: "Run, run, under the sun." },
+  Jump: { phrase: "jump high", scene: "I can jump.", rhyme: "Jump, jump, up and down." },
+  Clap: { phrase: "clap hands", scene: "I clap my hands.", rhyme: "Clap, clap, make a sound." },
+  Sing: { phrase: "sing a song", scene: "I can sing.", rhyme: "Sing, sing, ding, ding." },
+  Bed: { phrase: "my little bed", scene: "I sleep in bed.", rhyme: "Bed, bed, sleepy head." },
+  Cup: { phrase: "a blue cup", scene: "This is my cup.", rhyme: "Cup, cup, drink it up." },
+  Ball: { phrase: "a round ball", scene: "I kick the ball.", rhyme: "Ball, ball, bounce and fall." },
+  Book: { phrase: "a story book", scene: "I read a book.", rhyme: "Book, book, take a look." },
+  Lion: { phrase: "a big lion", scene: "The lion is strong.", rhyme: "Lion, lion, roar with me." },
+  Frog: { phrase: "a green frog", scene: "The frog can jump.", rhyme: "Frog, frog, hop on a log." },
+  Bee: { phrase: "a busy bee", scene: "The bee can buzz.", rhyme: "Bee, bee, buzz with me." },
+  Duck: { phrase: "a yellow duck", scene: "The duck can swim.", rhyme: "Duck, duck, quack, quack." },
+  Egg: { phrase: "a white egg", scene: "I see an egg.", rhyme: "Egg, egg, tap the peg." },
+  Juice: { phrase: "apple juice", scene: "I drink juice.", rhyme: "Juice, juice, sweet and cool." },
+  Rice: { phrase: "hot rice", scene: "I eat rice.", rhyme: "Rice, rice, very nice." },
+  Cookie: { phrase: "a round cookie", scene: "I want a cookie.", rhyme: "Cookie, cookie, crunchy bite." },
+  Dance: { phrase: "dance around", scene: "I can dance.", rhyme: "Dance, dance, move your feet." },
+  Sleep: { phrase: "sleep well", scene: "I go to sleep.", rhyme: "Sleep, sleep, count the sheep." },
+  Read: { phrase: "read a book", scene: "I read with Mom.", rhyme: "Read, read, learn and grow." },
+  Draw: { phrase: "draw a picture", scene: "I draw a sun.", rhyme: "Draw, draw, color more." },
+  Door: { phrase: "open the door", scene: "Please open the door.", rhyme: "Door, door, one step more." },
+  Chair: { phrase: "sit on a chair", scene: "I sit on a chair.", rhyme: "Chair, chair, sit right there." },
+  Lamp: { phrase: "turn on the lamp", scene: "The lamp is bright.", rhyme: "Lamp, lamp, light the room." },
+  Toy: { phrase: "my favorite toy", scene: "I play with a toy.", rhyme: "Toy, toy, share your joy." },
+};
+
 const lessonTitles = [
   "Hello Animals",
   "Yummy Food",
@@ -81,6 +116,9 @@ const buddy = document.querySelector("#buddy");
 const wordText = document.querySelector("#wordText");
 const wordChinese = document.querySelector("#wordChinese");
 const wordHint = document.querySelector("#wordHint");
+const phraseText = document.querySelector("#phraseText");
+const sceneText = document.querySelector("#sceneText");
+const rhymeText = document.querySelector("#rhymeText");
 const starCount = document.querySelector("#starCount");
 const wordCards = document.querySelector("#wordCards");
 const lessonTag = document.querySelector("#lessonTag");
@@ -211,6 +249,30 @@ function heardTarget(transcript, target) {
   return normalizeSpeech(transcript).split(" ").includes(target.toLowerCase());
 }
 
+function getWordExpression(word) {
+  return wordExpressions[word.word] || {
+    phrase: `a ${word.word.toLowerCase()}`,
+    scene: `I see a ${word.word.toLowerCase()}.`,
+    rhyme: `${word.word}, ${word.word}, say it with me.`,
+  };
+}
+
+function setRepeatButtonLabel() {
+  repeatBtn.textContent = `Speak ${selectedWord.word}`;
+}
+
+function updateWordDetails(word, hint = `/${word.sound}/ sound`) {
+  const expression = getWordExpression(word);
+  selectedWord = word;
+  wordText.textContent = word.word;
+  wordChinese.textContent = word.zh;
+  wordHint.textContent = hint;
+  phraseText.textContent = expression.phrase;
+  sceneText.textContent = expression.scene;
+  rhymeText.textContent = expression.rhyme;
+  setRepeatButtonLabel();
+}
+
 function showReward(word) {
   rewardText.textContent = `${word.word} / ${word.zh}`;
   rewardOverlay.classList.remove("hidden");
@@ -308,10 +370,7 @@ function animateBuddy(action) {
 function setSelectedWord(word, card) {
   document.querySelectorAll(".word-card").forEach((item) => item.classList.remove("active"));
   if (card) card.classList.add("active");
-  selectedWord = word;
-  wordText.textContent = word.word;
-  wordChinese.textContent = word.zh;
-  wordHint.textContent = `/${word.sound}/ sound`;
+  updateWordDetails(word);
   animateBuddy(word.action);
   speak(word.word);
 }
@@ -319,7 +378,7 @@ function setSelectedWord(word, card) {
 function stopListeningState() {
   isListening = false;
   repeatBtn.disabled = false;
-  repeatBtn.textContent = "Repeat";
+  setRepeatButtonLabel();
   repeatBtn.classList.remove("listening");
 }
 
@@ -409,10 +468,7 @@ function renderLesson() {
     )
     .join("");
 
-  selectedWord = words[0];
-  wordText.textContent = selectedWord.word;
-  wordChinese.textContent = selectedWord.zh;
-  wordHint.textContent = "Listen first, then copy!";
+  updateWordDetails(words[0], "Listen first, then copy!");
 
   document.querySelectorAll(".word-card").forEach((card) => {
     const word = words.find((item) => item.word === card.dataset.word);
@@ -654,6 +710,16 @@ kidName.addEventListener("keydown", (event) => {
 document.querySelector("#listenBtn").addEventListener("click", () => {
   animateBuddy(selectedWord.action);
   speak(selectedWord.word);
+});
+
+document.querySelectorAll(".expression-card").forEach((card) => {
+  card.addEventListener("click", () => {
+    const expression = getWordExpression(selectedWord);
+    const text = expression[card.dataset.say];
+    card.classList.remove("pop");
+    requestAnimationFrame(() => card.classList.add("pop"));
+    speak(text);
+  });
 });
 
 repeatBtn.addEventListener("click", startRepeatCheck);

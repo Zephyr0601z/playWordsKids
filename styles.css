@@ -538,7 +538,7 @@ h1 {
   display: grid;
   place-items: center;
   align-content: center;
-  gap: 22px;
+  gap: 16px;
   padding: 20px;
 }
 
@@ -674,6 +674,52 @@ h1 {
   color: #704b00;
   font-size: 1rem;
   font-weight: 900;
+}
+
+.expression-stack {
+  width: min(100%, 420px);
+  display: grid;
+  gap: 8px;
+}
+
+.expression-card {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 9px 12px;
+  border-radius: 18px;
+  text-align: left;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 -5px 0 rgba(39, 49, 79, 0.08);
+}
+
+.expression-card span {
+  min-height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: white;
+  background: #1ba6f7;
+  font-size: 0.78rem;
+  font-weight: 1000;
+}
+
+.expression-card:nth-child(2) span {
+  background: #25ad6a;
+}
+
+.expression-card:nth-child(3) span {
+  background: var(--coral);
+}
+
+.expression-card strong {
+  overflow-wrap: anywhere;
+  font-size: 1rem;
+  line-height: 1.15;
+  font-weight: 1000;
 }
 
 .word-play {
@@ -1301,6 +1347,15 @@ h1 {
 
   .character-zone {
     min-height: 318px;
+  }
+
+  .expression-card {
+    grid-template-columns: 66px 1fr;
+    min-height: 54px;
+  }
+
+  .expression-card strong {
+    font-size: 0.94rem;
   }
 
   .buddy {
