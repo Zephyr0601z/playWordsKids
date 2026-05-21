@@ -104,7 +104,8 @@ let currentSoundWord = lessons[0].words[0];
 let recognition = null;
 let isListening = false;
 let lessonMode = "course";
-let preferredVoice = null;
+let preferredEnglishVoice = null;
+let preferredChineseVoice = null;
 
 const appStage = document.querySelector("#appStage");
 const loginScreen = document.querySelector("#loginScreen");
@@ -116,6 +117,7 @@ const profileText = document.querySelector("#profileText");
 const buddy = document.querySelector("#buddy");
 const wordText = document.querySelector("#wordText");
 const wordChinese = document.querySelector("#wordChinese");
+const wordChineseBtn = document.querySelector("#wordChineseBtn");
 const wordHint = document.querySelector("#wordHint");
 const phraseText = document.querySelector("#phraseText");
 const sceneText = document.querySelector("#sceneText");
@@ -232,20 +234,42 @@ function sample(items, count) {
   return [...items].sort(() => Math.random() - 0.5).slice(0, count);
 }
 
-function chooseFriendlyVoice() {
-  if (preferredVoice || !("speechSynthesis" in window)) return preferredVoice;
+function chooseFriendlyVoice(lang = "en") {
+  if (!("speechSynthesis" in window)) return null;
+  if (lang === "zh" && preferredChineseVoice) return preferredChineseVoice;
+  if (lang !== "zh" && preferredEnglishVoice) return preferredEnglishVoice;
+
   const voices = window.speechSynthesis.getVoices();
+  if (lang === "zh") {
+    const chineseVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith("zh"));
+    const preferredNames = ["ting-ting", "tingting", "mei-jia", "meijia", "sin-ji", "huihui", "xiaoxiao", "yaoyao"];
+    preferredChineseVoice =
+      chineseVoices.find((voice) => preferredNames.some((name) => voice.name.toLowerCase().includes(name))) ||
+      chineseVoices.find((voice) => voice.lang.toLowerCase() === "zh-cn") ||
+      chineseVoices[0] ||
+      null;
+    return preferredChineseVoice;
+  }
+
   const englishVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith("en"));
   const preferredNames = ["samantha", "karen", "moira", "tessa", "zira", "aria", "jenny", "female"];
-  preferredVoice =
+  preferredEnglishVoice =
     englishVoices.find((voice) => preferredNames.some((name) => voice.name.toLowerCase().includes(name))) ||
     englishVoices.find((voice) => voice.lang.toLowerCase() === "en-us") ||
     englishVoices[0] ||
     null;
-  return preferredVoice;
+  return preferredEnglishVoice;
 }
 
-function speechStyle(text) {
+function speechStyle(text, lang = "en") {
+  if (lang === "zh") {
+    return {
+      rate: 0.82,
+      pitch: 1.12,
+      volume: 0.86,
+    };
+  }
+
   const isShortWord = /^[a-z]+$/i.test(text.trim());
   const isRhyme = text.includes(",") || text.split(" ").length > 5;
   return {
@@ -259,9 +283,10 @@ function speak(text, options = {}) {
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  const voice = chooseFriendlyVoice();
-  const style = speechStyle(text);
+  const lang = options.lang || "en";
+  utterance.lang = lang === "zh" ? "zh-CN" : "en-US";
+  const voice = chooseFriendlyVoice(lang);
+  const style = speechStyle(text, lang);
   if (voice) utterance.voice = voice;
   utterance.rate = options.rate || style.rate;
   utterance.pitch = options.pitch || style.pitch;
@@ -269,10 +294,21 @@ function speak(text, options = {}) {
   window.speechSynthesis.speak(utterance);
 }
 
+function speakChinese(text, options = {}) {
+  speak(text, { lang: "zh", ...options });
+}
+
+function speakWordWithMeaning(word) {
+  speak(word.word);
+  window.setTimeout(() => speakChinese(word.zh), 850);
+}
+
 if ("speechSynthesis" in window) {
   window.speechSynthesis.addEventListener("voiceschanged", () => {
-    preferredVoice = null;
+    preferredEnglishVoice = null;
+    preferredChineseVoice = null;
     chooseFriendlyVoice();
+    chooseFriendlyVoice("zh");
   });
 }
 
@@ -407,7 +443,7 @@ function setSelectedWord(word, card) {
   if (card) card.classList.add("active");
   updateWordDetails(word);
   animateBuddy(word.action);
-  speak(word.word);
+  speakWordWithMeaning(word);
 }
 
 function stopListeningState() {
@@ -564,8 +600,10 @@ function renderSoundGame() {
     choice.addEventListener("click", () => {
       choice.classList.remove("happy", "wrong");
       if (choice.dataset.answer === "yes") {
+        const word = courseWords.find((item) => item.word === choice.dataset.word);
         choice.classList.add("happy");
         speak(`${choice.dataset.word}. Yes, nice listening!`, { rate: 0.74, pitch: 1.26 });
+        if (word) window.setTimeout(() => speakChinese(word.zh), 1200);
         addStar();
       } else {
         choice.classList.add("wrong");
@@ -635,6 +673,7 @@ function checkMatch(zone, incoming) {
     selectedDragWord = null;
     if (word) markPracticed(word);
     speak(`Yes, ${incoming}. Well done!`, { rate: 0.74, pitch: 1.26 });
+    if (word) window.setTimeout(() => speakChinese(word.zh), 1200);
     addStar();
   } else {
     zone.classList.add("wrong");
@@ -659,6 +698,7 @@ function renderMoleGame() {
         mole.classList.add("happy");
         if (word) markPracticed(word);
         speak(`Yes, ${currentMoleTarget}. You found it!`, { rate: 0.74, pitch: 1.26 });
+        if (word) window.setTimeout(() => speakChinese(word.zh), 1200);
         addStar();
         window.setTimeout(renderMoleGame, 700);
       } else {
@@ -744,8 +784,10 @@ kidName.addEventListener("keydown", (event) => {
 
 document.querySelector("#listenBtn").addEventListener("click", () => {
   animateBuddy(selectedWord.action);
-  speak(selectedWord.word);
+  speakWordWithMeaning(selectedWord);
 });
+
+wordChineseBtn.addEventListener("click", () => speakChinese(selectedWord.zh));
 
 document.querySelectorAll(".expression-card").forEach((card) => {
   card.addEventListener("click", () => {

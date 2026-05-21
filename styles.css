@@ -660,12 +660,25 @@ h1 {
   font-weight: 1000;
 }
 
+.word-meaning {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 0;
+  color: #423000;
+  background: transparent;
+}
+
 .speech strong {
   display: block;
-  margin-top: 8px;
   color: #423000;
   font-size: 1.55rem;
   font-weight: 1000;
+}
+
+.word-meaning:focus-visible {
+  outline: 4px solid rgba(112, 75, 0, 0.22);
+  border-radius: 12px;
 }
 
 .speech small {
