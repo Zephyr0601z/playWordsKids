@@ -1018,6 +1018,47 @@ h1 {
   font-weight: 1000;
 }
 
+.chant-card {
+  grid-template-rows: auto auto auto;
+}
+
+.chant-card small {
+  grid-column: 2;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.25;
+  font-weight: 900;
+}
+
+.chant-beats {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(54px, 1fr));
+  gap: 6px;
+  margin-top: 2px;
+  font-style: normal;
+}
+
+.chant-beats i {
+  min-height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #704b00;
+  background: rgba(255, 212, 95, 0.34);
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 1000;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.chant-beats i.active {
+  color: white;
+  background: var(--coral);
+  transform: translateY(-4px) scale(1.06);
+  box-shadow: 0 8px 14px rgba(255, 126, 121, 0.26);
+}
+
 .word-play {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -2099,6 +2140,19 @@ h1 {
 
   .expression-card strong {
     font-size: 0.86rem;
+  }
+
+  .chant-card small {
+    font-size: 0.72rem;
+  }
+
+  .chant-beats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .chant-beats i {
+    min-height: 28px;
+    font-size: 0.7rem;
   }
 
   .buddy {

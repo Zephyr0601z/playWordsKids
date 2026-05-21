@@ -393,6 +393,8 @@ const wordHint = document.querySelector("#wordHint");
 const phraseText = document.querySelector("#phraseText");
 const sceneText = document.querySelector("#sceneText");
 const rhymeText = document.querySelector("#rhymeText");
+const chantMeaning = document.querySelector("#chantMeaning");
+const chantBeats = document.querySelector("#chantBeats");
 const starCount = document.querySelector("#starCount");
 const wordCards = document.querySelector("#wordCards");
 const lessonTag = document.querySelector("#lessonTag");
@@ -614,6 +616,18 @@ function getWordExpression(word) {
   );
 }
 
+function chantMeaningText(word, expression) {
+  return `儿歌句：${word.zh}，跟着节拍说 “${expression.rhyme}”`;
+}
+
+function chantBeatsFor(text) {
+  return text
+    .replace(/[.!?]/g, "")
+    .split(/[\s,]+/)
+    .filter(Boolean)
+    .slice(0, 6);
+}
+
 function setRepeatButtonLabel() {
   repeatBtn.textContent = `Speak ${selectedWord.word}`;
 }
@@ -627,7 +641,28 @@ function updateWordDetails(word, hint = `/${word.sound}/ sound`) {
   phraseText.textContent = expression.phrase;
   sceneText.textContent = expression.scene;
   rhymeText.textContent = expression.rhyme;
+  chantMeaning.textContent = chantMeaningText(word, expression);
+  chantBeats.innerHTML = chantBeatsFor(expression.rhyme).map((beat) => `<i>${beat}</i>`).join("");
   setRepeatButtonLabel();
+}
+
+function playChant() {
+  const expression = getWordExpression(selectedWord);
+  const beatItems = Array.from(chantBeats.querySelectorAll("i"));
+  animateBuddy("happy");
+  speakChinese(chantMeaningText(selectedWord, expression), { rate: 0.9, pitch: 1.08 });
+  window.setTimeout(() => {
+    speak(expression.rhyme, { rate: 0.68, pitch: 1.28 });
+    beatItems.forEach((beat, index) => {
+      window.setTimeout(() => {
+        beatItems.forEach((item) => item.classList.remove("active"));
+        beat.classList.add("active");
+        if (index === beatItems.length - 1) {
+          window.setTimeout(() => beat.classList.remove("active"), 480);
+        }
+      }, index * 430);
+    });
+  }, 1500);
 }
 
 function showReward(word) {
@@ -1143,6 +1178,10 @@ wordChineseBtn.addEventListener("click", () => speakChinese(selectedWord.zh));
 document.querySelectorAll(".expression-card").forEach((card) => {
   card.addEventListener("click", () => {
     const expression = getWordExpression(selectedWord);
+    if (card.dataset.say === "chant") {
+      playChant();
+      return;
+    }
     const text = expression[card.dataset.say];
     card.classList.remove("pop");
     requestAnimationFrame(() => card.classList.add("pop"));
