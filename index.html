@@ -87,6 +87,7 @@
           <button class="tab" data-screen="sound">Sound</button>
           <button class="tab" data-screen="match">Match</button>
           <button class="tab" data-screen="mole">Tap</button>
+          <button class="tab" data-screen="parent">Parent</button>
         </nav>
 
         <section id="home" class="screen active-screen">
@@ -171,6 +172,11 @@
         <section id="lesson" class="screen">
           <div class="lesson-grid">
             <article class="character-zone">
+              <div class="story-card" aria-label="story mission">
+                <span id="storyWorld">Forest Island</span>
+                <strong id="storyTitle">森林里谁在叫？</strong>
+                <small id="storyMission">Listen to the sound and help Buddy find the animal.</small>
+              </div>
               <div id="buddy" class="buddy wave" aria-hidden="true">
                 <span class="ear left"></span>
                 <span class="ear right"></span>
@@ -218,6 +224,11 @@
                 <div id="lessonProgress" class="lesson-progress">0/4</div>
               </div>
               <div id="lessonSteps" class="lesson-steps" aria-label="lesson steps"></div>
+              <div class="phonics-card" aria-label="phonics practice">
+                <span>Phonics</span>
+                <strong id="phonicsBlend">c-a-t, cat</strong>
+                <div id="phonicsChunks" class="phonics-chunks"></div>
+              </div>
               <div id="wordCards" class="word-card-grid"></div>
             </article>
           </div>
@@ -251,6 +262,32 @@
             <span id="targetWord">Cat</span>
           </div>
           <div id="moleGrid" class="mole-grid"></div>
+        </section>
+
+        <section id="parent" class="screen">
+          <div class="parent-dashboard">
+            <article class="parent-summary">
+              <div class="panel-title">
+                <span>Parent</span>
+                <strong>学习报告</strong>
+              </div>
+              <div id="parentStats" class="parent-stats"></div>
+            </article>
+            <article class="parent-report">
+              <div class="panel-title">
+                <span>Today</span>
+                <strong>今日表现</strong>
+              </div>
+              <div id="parentReportList" class="parent-report-list"></div>
+            </article>
+            <article class="parent-coach">
+              <div class="panel-title">
+                <span>Coach</span>
+                <strong>陪练建议</strong>
+              </div>
+              <p id="parentTip">睡前问孩子：What animal says meow?</p>
+            </article>
+          </div>
         </section>
       </section>
 

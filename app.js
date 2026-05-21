@@ -348,11 +348,65 @@ const lessonSections = [
   "Polite",
 ];
 
-const lessons = Array.from({ length: Math.ceil(courseWords.length / 4) }, (_, index) => ({
-  title: lessonTitles[index] || `Lesson ${index + 1}`,
-  section: lessonSections[index] || "Core",
-  words: courseWords.slice(index * 4, index * 4 + 4),
-}));
+const sectionStories = {
+  Animals: {
+    world: "Forest Island",
+    title: "森林里谁在叫？",
+    mission: "Buddy 听到一个声音，帮它找到森林朋友。",
+    win: "You saved the forest friend!",
+  },
+  Food: {
+    world: "Food Town",
+    title: "野餐篮少了什么？",
+    mission: "听一听、说一说，把食物放回野餐篮。",
+    win: "Picnic sticker unlocked!",
+  },
+  Actions: {
+    world: "Move Park",
+    title: "动作小队出发！",
+    mission: "跟着 Buddy 做动作，再大声说出来。",
+    win: "Action badge unlocked!",
+  },
+  Home: {
+    world: "Cozy Home",
+    title: "家里藏着什么？",
+    mission: "找到房间里的小物品，学会说它们。",
+    win: "Home sticker unlocked!",
+  },
+  Weather: {
+    world: "Weather Sky",
+    title: "今天是什么天气？",
+    mission: "看天空、听声音，帮 Buddy 选择天气。",
+    win: "Weather badge unlocked!",
+  },
+  School: {
+    world: "School Bus",
+    title: "上学准备好了吗？",
+    mission: "找到课堂用品，完成开学小任务。",
+    win: "School sticker unlocked!",
+  },
+};
+
+function lessonStoryFor(section) {
+  return (
+    sectionStories[section] || {
+      world: `${section} World`,
+      title: "Buddy 的英语小任务",
+      mission: "听、看、说，完成今天的英语冒险。",
+      win: "Sticker unlocked!",
+    }
+  );
+}
+
+const lessons = Array.from({ length: Math.ceil(courseWords.length / 4) }, (_, index) => {
+  const section = lessonSections[index] || "Core";
+  return {
+    title: lessonTitles[index] || `Lesson ${index + 1}`,
+    section,
+    story: lessonStoryFor(section),
+    words: courseWords.slice(index * 4, index * 4 + 4),
+  };
+});
 
 let profileKey = "guest";
 let currentProfile = {
@@ -364,6 +418,7 @@ let currentProfile = {
 };
 let currentLessonIndex = 0;
 let practicedWords = new Set();
+let wordStats = {};
 let stars = 0;
 let courseCompleted = false;
 let selectedWord = lessons[0].words[0];
@@ -392,11 +447,16 @@ const wordText = document.querySelector("#wordText");
 const wordChinese = document.querySelector("#wordChinese");
 const wordChineseBtn = document.querySelector("#wordChineseBtn");
 const wordHint = document.querySelector("#wordHint");
+const storyWorld = document.querySelector("#storyWorld");
+const storyTitle = document.querySelector("#storyTitle");
+const storyMission = document.querySelector("#storyMission");
 const phraseText = document.querySelector("#phraseText");
 const sceneText = document.querySelector("#sceneText");
 const rhymeText = document.querySelector("#rhymeText");
 const chantMeaning = document.querySelector("#chantMeaning");
 const chantBeats = document.querySelector("#chantBeats");
+const phonicsBlend = document.querySelector("#phonicsBlend");
+const phonicsChunks = document.querySelector("#phonicsChunks");
 const starCount = document.querySelector("#starCount");
 const wordCards = document.querySelector("#wordCards");
 const lessonTag = document.querySelector("#lessonTag");
@@ -422,6 +482,9 @@ const reviewCount = document.querySelector("#reviewCount");
 const courseMap = document.querySelector("#courseMap");
 const questList = document.querySelector("#questList");
 const stickerShelf = document.querySelector("#stickerShelf");
+const parentStats = document.querySelector("#parentStats");
+const parentReportList = document.querySelector("#parentReportList");
+const parentTip = document.querySelector("#parentTip");
 const screens = document.querySelectorAll(".screen");
 const tabs = document.querySelectorAll(".tab");
 
@@ -462,6 +525,7 @@ function saveProgress() {
       lesson: currentLessonIndex,
       stars,
       practiced: [...practicedWords],
+      wordStats,
       completed: courseCompleted,
     })
   );
@@ -471,6 +535,7 @@ function loadProgress() {
   currentLessonIndex = 0;
   stars = 0;
   practicedWords = new Set();
+  wordStats = {};
   courseCompleted = false;
 
   const raw = localStorage.getItem(storageKey());
@@ -481,10 +546,12 @@ function loadProgress() {
     currentLessonIndex = Math.min(progress.lesson || 0, lessons.length - 1);
     stars = progress.stars || 0;
     practicedWords = new Set(progress.practiced || []);
+    wordStats = progress.wordStats || {};
     courseCompleted = Boolean(progress.completed);
   } catch {
     currentLessonIndex = 0;
     practicedWords = new Set();
+    wordStats = {};
     courseCompleted = false;
   }
 }
@@ -495,8 +562,10 @@ function currentLesson() {
 
 function currentLessonWords() {
   if (lessonMode === "review") {
-    const words = learnedWords();
-    return words.length ? words.slice(-4) : currentLesson().words;
+    const words = reviewDueWords();
+    if (words.length) return words;
+    const learned = learnedWords();
+    return learned.length ? learned.slice(-4) : currentLesson().words;
   }
 
   return currentLesson().words;
@@ -516,6 +585,7 @@ function setActiveScreen(screenName) {
   tabs.forEach((item) => item.classList.toggle("active", item.dataset.screen === screenName));
   screens.forEach((screen) => screen.classList.toggle("active-screen", screen.id === screenName));
   if (screenName === "lesson") updateVoiceFallback();
+  if (screenName === "parent") renderParentReport();
 }
 
 function sample(items, count) {
@@ -618,6 +688,65 @@ function normalizeSpeech(text) {
 
 function heardTarget(transcript, target) {
   return normalizeSpeech(transcript).split(" ").includes(target.toLowerCase());
+}
+
+function phonicsFor(word) {
+  const letters = word.word.toLowerCase().replace(/[^a-z]/g, "").split("");
+  return {
+    letter: word.letter,
+    sound: `/${word.sound}/`,
+    chunks: letters,
+    blend: `${letters.join("-")}, ${word.word.toLowerCase()}`,
+  };
+}
+
+function pronunciationFeedback(transcript, target) {
+  const heard = normalizeSpeech(transcript);
+  const word = target.toLowerCase();
+  if (heard.split(" ").includes(word) || heard.includes(word)) {
+    return { score: 100, message: "Great! You said it!", coach: `Great! ${target}` };
+  }
+  if (heard && heard[0] === word[0]) {
+    return { score: 60, message: `Good start! Try the whole word: ${target}`, coach: `Good start. Say it slowly: ${target}` };
+  }
+  return { score: 30, message: `Listen again. Say: ${target}`, coach: `Listen again. ${target}` };
+}
+
+function recordPractice(word, result = {}) {
+  const previous = wordStats[word.word] || {
+    seenCount: 0,
+    correctCount: 0,
+    wrongCount: 0,
+    lastPracticedAt: 0,
+    nextReviewAt: 0,
+    mastery: 0,
+  };
+  const isCorrect = result.correct !== false;
+  const seenCount = previous.seenCount + 1;
+  const correctCount = previous.correctCount + (isCorrect ? 1 : 0);
+  const wrongCount = previous.wrongCount + (isCorrect ? 0 : 1);
+  const mastery = Math.min(1, Math.max(0.12, correctCount / Math.max(1, seenCount)));
+  const reviewDelay = mastery > 0.8 ? 3 : mastery > 0.5 ? 1 : 0.25;
+  wordStats[word.word] = {
+    seenCount,
+    correctCount,
+    wrongCount,
+    lastPracticedAt: Date.now(),
+    nextReviewAt: Date.now() + reviewDelay * 24 * 60 * 60 * 1000,
+    mastery,
+    lastScore: result.score || (isCorrect ? 100 : 30),
+  };
+  saveProgress();
+}
+
+function reviewDueWords() {
+  const now = Date.now();
+  return learnedWords()
+    .filter((word) => {
+      const stat = wordStats[word.word];
+      return !stat || stat.nextReviewAt <= now || stat.mastery < 0.68;
+    })
+    .slice(-4);
 }
 
 function getWordExpression(word) {
@@ -804,6 +933,7 @@ function setRepeatButtonLabel() {
 
 function updateWordDetails(word, hint = `/${word.sound}/ sound`) {
   const expression = getWordExpression(word);
+  const phonics = phonicsFor(word);
   selectedWord = word;
   wordText.textContent = word.word;
   wordChinese.textContent = word.zh;
@@ -813,6 +943,13 @@ function updateWordDetails(word, hint = `/${word.sound}/ sound`) {
   rhymeText.textContent = expression.rhyme;
   chantMeaning.textContent = chantMeaningText(word, expression);
   chantBeats.innerHTML = chantBeatsFor(expression.rhyme).map((beat) => `<i>${beat}</i>`).join("");
+  phonicsBlend.textContent = phonics.blend;
+  phonicsChunks.innerHTML = phonics.chunks
+    .map((chunk, index) => `<button type="button" data-chunk="${chunk}" aria-label="sound ${chunk}">${chunk}${index === 0 ? `<small>${phonics.sound}</small>` : ""}</button>`)
+    .join("");
+  phonicsChunks.querySelectorAll("button").forEach((chunk) => {
+    chunk.addEventListener("click", () => speak(chunk.dataset.chunk, { rate: 0.58, pitch: 1.34 }));
+  });
   setRepeatButtonLabel();
 }
 
@@ -895,13 +1032,15 @@ function closeCourseComplete() {
   courseCompleteOverlay.classList.remove("celebration-show");
 }
 
-function completeSpokenWord() {
-  wordHint.textContent = "You got it!";
+function completeSpokenWord(feedback = { score: 100, message: "Great! You said it!" }) {
+  wordHint.textContent = feedback.message;
   animateBuddy("happy");
+  recordPractice(selectedWord, { correct: true, score: feedback.score });
   markPracticed(selectedWord);
   addStar();
   showReward(selectedWord);
-  speak(`Great job. ${selectedWord.word}`, { rate: 0.72, pitch: 1.28 });
+  renderParentReport();
+  speak(feedback.coach || `Great job. ${selectedWord.word}`, { rate: 0.72, pitch: 1.28 });
 }
 
 function collectProfile(isGuest = false) {
@@ -951,6 +1090,7 @@ function enterApp(profile) {
   renderMatchGame();
   renderMoleGame();
   renderHome();
+  renderParentReport();
   updateVoiceFallback();
   setActiveScreen("home");
   window.setTimeout(() => speak("Hi, little star. Let's play English!", { rate: 0.72, pitch: 1.3 }), 350);
@@ -968,6 +1108,7 @@ function markPracticed(word) {
   practicedWords.add(word.word);
   updateLessonProgress();
   renderHome();
+  renderParentReport();
   saveProgress();
 }
 
@@ -1024,12 +1165,15 @@ function startRepeatCheck() {
   recognition.onresult = (event) => {
     const alternatives = Array.from(event.results[0] || []);
     const transcript = alternatives.map((item) => item.transcript).join(" ");
-    if (heardTarget(transcript, selectedWord.word)) {
-      completeSpokenWord();
+    const feedback = pronunciationFeedback(transcript, selectedWord.word);
+    if (feedback.score >= 60 || heardTarget(transcript, selectedWord.word)) {
+      completeSpokenWord(feedback);
     } else {
-      wordHint.textContent = "Try again!";
+      wordHint.textContent = feedback.message;
       buddy.classList.add("wrong");
-      speak("Almost. Try again.", { rate: 0.72, pitch: 1.22 });
+      recordPractice(selectedWord, { correct: false, score: feedback.score });
+      renderParentReport();
+      speak(feedback.coach, { rate: 0.72, pitch: 1.22 });
     }
   };
 
@@ -1067,6 +1211,9 @@ function updateLessonProgress() {
 function renderLesson() {
   const lesson = currentLesson();
   const words = currentLessonWords();
+  storyWorld.textContent = lessonMode === "review" ? "Review Trail" : lesson.story.world;
+  storyTitle.textContent = lessonMode === "review" ? "复习小挑战" : lesson.story.title;
+  storyMission.textContent = lessonMode === "review" ? "把快忘记的单词再找回来。" : lesson.story.mission;
   lessonTag.textContent = lessonMode === "review" ? "Review" : `${lesson.section} · Lesson ${currentLessonIndex + 1}`;
   lessonTitle.textContent = lessonMode === "review" ? "Review Words" : lesson.title;
   wordCards.innerHTML = words
@@ -1216,6 +1363,7 @@ function checkMatch(zone, incoming) {
     if (selectedDragWord) selectedDragWord.classList.remove("selected");
     selectedDragWord = null;
     if (word) markPracticed(word);
+    if (word) recordPractice(word, { correct: true, score: 100 });
     speak(`Yes, ${incoming}. Well done!`, { rate: 0.74, pitch: 1.26 });
     if (word) window.setTimeout(() => speakChinese(word.zh), 1200);
     addStar();
@@ -1241,6 +1389,7 @@ function renderMoleGame() {
         const word = currentLessonWords().find((item) => item.word === currentMoleTarget);
         mole.classList.add("happy");
         if (word) markPracticed(word);
+        if (word) recordPractice(word, { correct: true, score: 100 });
         speak(`Yes, ${currentMoleTarget}. You found it!`, { rate: 0.74, pitch: 1.26 });
         if (word) window.setTimeout(() => speakChinese(word.zh), 1200);
         addStar();
@@ -1261,21 +1410,23 @@ function refreshGames() {
   renderMatchGame();
   renderMoleGame();
   renderHome();
+  renderParentReport();
 }
 
 function renderHome() {
   const lesson = currentLesson();
   const done = lesson.words.filter((word) => practicedWords.has(word.word)).length;
   const learned = learnedWords();
+  const dueWords = reviewDueWords();
   const questItems = [
-    { icon: "🎧", title: "Listen", text: `${done}/${lesson.words.length} words`, done: done > 0 },
+    { icon: "🎧", title: "Story", text: lesson.story.title, done: done > 0 },
     { icon: "🗣️", title: "Speak", text: done === lesson.words.length ? "Ready for next" : "Say today words", done: done === lesson.words.length },
-    { icon: "⭐", title: "Collect", text: `${stars} stars`, done: stars >= (currentLessonIndex + 1) * 4 },
+    { icon: "🔁", title: "Review", text: dueWords.length ? `${dueWords.length} words due` : "No review yet", done: learned.length > 0 && dueWords.length === 0 },
   ];
   const stickerWords = learned.length ? learned.slice(-6) : lesson.words.slice(0, 4);
   homeLessonTag.textContent = `${lesson.section} · Lesson ${currentLessonIndex + 1}`;
-  homeLessonTitle.textContent = lesson.title;
-  homeLessonStatus.textContent = `${done}/${lesson.words.length} words`;
+  homeLessonTitle.textContent = lesson.story.title;
+  homeLessonStatus.textContent = `${lesson.story.world} · ${done}/${lesson.words.length} words`;
   reviewCount.textContent = `${learned.length} learned`;
   document.querySelector("#reviewBtn").disabled = learned.length === 0;
   questList.innerHTML = questItems
@@ -1352,6 +1503,37 @@ function renderHome() {
   });
 }
 
+function renderParentReport() {
+  if (!parentStats || !parentReportList) return;
+  const learned = learnedWords();
+  const stats = Object.values(wordStats);
+  const totalSpeak = stats.reduce((sum, item) => sum + item.seenCount, 0);
+  const averageMastery = stats.length
+    ? Math.round((stats.reduce((sum, item) => sum + item.mastery, 0) / stats.length) * 100)
+    : 0;
+  const strongWords = learned
+    .filter((word) => (wordStats[word.word]?.mastery || 0) >= 0.8)
+    .slice(-4);
+  const reviewWords = reviewDueWords();
+  parentStats.innerHTML = [
+    { label: "已学单词", value: learned.length },
+    { label: "跟读次数", value: totalSpeak },
+    { label: "平均掌握", value: `${averageMastery}%` },
+    { label: "星星奖励", value: stars },
+  ]
+    .map((item) => `<div><strong>${item.value}</strong><span>${item.label}</span></div>`)
+    .join("");
+  parentReportList.innerHTML = [
+    { title: "掌握较好", value: strongWords.length ? strongWords.map((word) => word.word).join(", ") : "先完成一次跟读" },
+    { title: "建议复习", value: reviewWords.length ? reviewWords.map((word) => `${word.word}(${word.zh})`).join(", ") : "暂无需要复习的词" },
+    { title: "当前故事", value: `${currentLesson().story.world}：${currentLesson().story.title}` },
+  ]
+    .map((item) => `<div class="report-row"><strong>${item.title}</strong><span>${item.value}</span></div>`)
+    .join("");
+  const coachingWord = reviewWords[0] || currentLesson().words[0];
+  parentTip.textContent = `陪练建议：睡前问孩子 “Can you say ${coachingWord.word}?”，再让孩子说中文意思“${coachingWord.zh}”。`;
+}
+
 document.querySelector("#loginBtn").addEventListener("click", () => enterApp(collectProfile()));
 document.querySelector("#guestBtn").addEventListener("click", () => enterApp(collectProfile(true)));
 document.querySelector("#switchUserBtn").addEventListener("click", () => {
@@ -1385,7 +1567,7 @@ document.querySelectorAll(".expression-card").forEach((card) => {
 });
 
 repeatBtn.addEventListener("click", startRepeatCheck);
-manualDoneBtn.addEventListener("click", completeSpokenWord);
+manualDoneBtn.addEventListener("click", () => completeSpokenWord());
 
 document.querySelector("#continueBtn").addEventListener("click", () => {
   lessonMode = "course";

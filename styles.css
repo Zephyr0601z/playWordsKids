@@ -389,7 +389,12 @@ h1 {
 .game-panel,
 .today-panel,
 .review-panel,
-.map-panel {
+.map-panel,
+.story-card,
+.phonics-card,
+.parent-summary,
+.parent-report,
+.parent-coach {
   border: 2px solid var(--line);
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.58);
@@ -972,6 +977,36 @@ h1 {
   font-weight: 900;
 }
 
+.story-card {
+  width: min(100%, 420px);
+  display: grid;
+  gap: 6px;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 212, 95, 0.58), transparent 6rem),
+    rgba(255, 255, 255, 0.72);
+}
+
+.story-card span,
+.phonics-card span {
+  color: var(--coral);
+  font-size: 0.78rem;
+  font-weight: 1000;
+  text-transform: uppercase;
+}
+
+.story-card strong {
+  font-size: 1.35rem;
+  line-height: 1.1;
+  font-weight: 1000;
+}
+
+.story-card small {
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.3;
+  font-weight: 900;
+}
+
 .expression-stack {
   width: min(100%, 420px);
   display: grid;
@@ -1066,7 +1101,7 @@ h1 {
 
 .word-play {
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto auto 1fr;
   gap: 12px;
   padding: 16px;
 }
@@ -1125,6 +1160,43 @@ h1 {
 
 .step-dot.done {
   background: #25ad6a;
+}
+
+.phonics-card {
+  display: grid;
+  gap: 10px;
+  background: rgba(255, 253, 247, 0.76);
+}
+
+.phonics-card strong {
+  font-size: 1.18rem;
+  font-weight: 1000;
+}
+
+.phonics-chunks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+  gap: 8px;
+}
+
+.phonics-chunks button {
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1px;
+  border-radius: 16px;
+  color: #704b00;
+  background: var(--sun);
+  font-size: 1.3rem;
+  font-weight: 1000;
+  box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.1);
+}
+
+.phonics-chunks small {
+  color: #704b00;
+  font-size: 0.7rem;
+  font-weight: 1000;
 }
 
 .word-card-grid {
@@ -1401,6 +1473,66 @@ h1 {
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   padding: 16px;
+}
+
+.parent-dashboard {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 16px;
+}
+
+.parent-summary,
+.parent-report,
+.parent-coach {
+  display: grid;
+  align-content: start;
+}
+
+.parent-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.parent-stats div,
+.report-row {
+  min-height: 78px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: inset 0 -6px 0 rgba(39, 49, 79, 0.08);
+}
+
+.parent-stats strong {
+  font-size: 1.9rem;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.parent-stats span,
+.report-row span,
+.parent-coach p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.35;
+  font-weight: 900;
+}
+
+.parent-report-list {
+  display: grid;
+  gap: 10px;
+}
+
+.report-row strong {
+  font-size: 1.08rem;
+  font-weight: 1000;
+}
+
+.parent-coach {
+  grid-column: 1 / -1;
 }
 
 .pop {
@@ -2014,7 +2146,7 @@ h1 {
 
   .mode-tabs {
     display: grid;
-    grid-template-columns: repeat(5, minmax(58px, 1fr));
+    grid-template-columns: repeat(3, minmax(74px, 1fr));
     gap: 5px;
     padding: 5px;
     border-radius: 18px;
@@ -2028,7 +2160,8 @@ h1 {
 
   .lesson-grid,
   .match-area,
-  .home-dashboard {
+  .home-dashboard,
+  .parent-dashboard {
     grid-template-columns: 1fr;
   }
 
@@ -2077,7 +2210,12 @@ h1 {
   .game-panel,
   .today-panel,
   .review-panel,
-  .map-panel {
+  .map-panel,
+  .story-card,
+  .phonics-card,
+  .parent-summary,
+  .parent-report,
+  .parent-coach {
     padding: 14px;
     border-radius: 20px;
   }
@@ -2127,6 +2265,18 @@ h1 {
     min-height: auto;
     padding: 14px;
     border-radius: 20px;
+  }
+
+  .story-card {
+    gap: 5px;
+  }
+
+  .story-card strong {
+    font-size: 1.1rem;
+  }
+
+  .story-card small {
+    font-size: 0.78rem;
   }
 
   .expression-card {
@@ -2286,6 +2436,20 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .phonics-card {
+    gap: 8px;
+  }
+
+  .phonics-chunks {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .phonics-chunks button {
+    min-height: 44px;
+    border-radius: 14px;
+    font-size: 1.08rem;
+  }
+
   .word-card {
     min-height: 118px;
     grid-template-columns: auto 1fr;
@@ -2326,6 +2490,24 @@ h1 {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     padding: 12px;
+  }
+
+  .parent-dashboard {
+    gap: 12px;
+  }
+
+  .parent-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .parent-stats div,
+  .report-row {
+    min-height: 68px;
+    border-radius: 16px;
+  }
+
+  .parent-stats strong {
+    font-size: 1.42rem;
   }
 
   .action-row {
