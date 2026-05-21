@@ -377,6 +377,8 @@ let isListening = false;
 let lessonMode = "course";
 let preferredEnglishVoice = null;
 let preferredChineseVoice = null;
+let chantTimers = [];
+let chantRunId = 0;
 
 const appStage = document.querySelector("#appStage");
 const loginScreen = document.querySelector("#loginScreen");
@@ -566,18 +568,29 @@ function speechStyle(text, lang = "en") {
 }
 
 function speak(text, options = {}) {
-  if (!("speechSynthesis" in window)) return;
+  if (!("speechSynthesis" in window)) return Promise.resolve();
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  const lang = options.lang || "en";
-  utterance.lang = lang === "zh" ? "zh-CN" : "en-US";
-  const voice = chooseFriendlyVoice(lang);
-  const style = speechStyle(text, lang);
-  if (voice) utterance.voice = voice;
-  utterance.rate = options.rate || style.rate;
-  utterance.pitch = options.pitch || style.pitch;
-  utterance.volume = options.volume || style.volume;
-  window.speechSynthesis.speak(utterance);
+  return new Promise((resolve) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    const lang = options.lang || "en";
+    const fallbackTimer = window.setTimeout(resolve, Math.max(900, text.length * 180));
+    utterance.lang = lang === "zh" ? "zh-CN" : "en-US";
+    const voice = chooseFriendlyVoice(lang);
+    const style = speechStyle(text, lang);
+    if (voice) utterance.voice = voice;
+    utterance.rate = options.rate || style.rate;
+    utterance.pitch = options.pitch || style.pitch;
+    utterance.volume = options.volume || style.volume;
+    utterance.onend = () => {
+      window.clearTimeout(fallbackTimer);
+      resolve();
+    };
+    utterance.onerror = () => {
+      window.clearTimeout(fallbackTimer);
+      resolve();
+    };
+    window.speechSynthesis.speak(utterance);
+  });
 }
 
 function speakChinese(text, options = {}) {
@@ -617,7 +630,15 @@ function getWordExpression(word) {
 }
 
 function chantMeaningText(word, expression) {
-  return `儿歌句：${word.zh}，跟着节拍说 “${expression.rhyme}”`;
+  const knownMeanings = {
+    Cat: "中文意思：小猫，小猫，像这样拍拍手。",
+    Dog: "中文意思：小狗，小狗，说 hello。",
+    Bird: "中文意思：小鸟，小鸟，飞得高高。",
+    Fish: "中文意思：小鱼，小鱼，游呀游。",
+    Book: "中文意思：书，书，看一看。",
+    Ball: "中文意思：球，球，弹一弹。",
+  };
+  return knownMeanings[word.word] || `中文意思：这是一句关于“${word.zh}”的节奏口令，跟着节拍记住 ${word.word}。`;
 }
 
 function chantBeatsFor(text) {
@@ -646,23 +667,50 @@ function updateWordDetails(word, hint = `/${word.sound}/ sound`) {
   setRepeatButtonLabel();
 }
 
-function playChant() {
+function clearChantPlayback() {
+  chantRunId += 1;
+  chantTimers.forEach((timer) => window.clearTimeout(timer));
+  chantTimers = [];
+  chantBeats.querySelectorAll("i").forEach((item) => item.classList.remove("active"));
+  document.querySelector(".chant-card")?.classList.remove("playing");
+}
+
+function wait(ms) {
+  return new Promise((resolve) => {
+    chantTimers.push(window.setTimeout(resolve, ms));
+  });
+}
+
+async function playChant() {
+  clearChantPlayback();
+  const runId = chantRunId;
   const expression = getWordExpression(selectedWord);
   const beatItems = Array.from(chantBeats.querySelectorAll("i"));
+  const chantCard = document.querySelector(".chant-card");
+  chantCard?.classList.add("playing");
   animateBuddy("happy");
-  speakChinese(chantMeaningText(selectedWord, expression), { rate: 0.9, pitch: 1.08 });
-  window.setTimeout(() => {
-    speak(expression.rhyme, { rate: 0.68, pitch: 1.28 });
-    beatItems.forEach((beat, index) => {
+  await speakChinese(chantMeaningText(selectedWord, expression), { rate: 0.72, pitch: 1.08 });
+  if (runId !== chantRunId) return;
+  await wait(650);
+  if (runId !== chantRunId) return;
+  speak(expression.rhyme, { rate: 0.62, pitch: 1.28 });
+  beatItems.forEach((beat, index) => {
+    chantTimers.push(
       window.setTimeout(() => {
+        if (runId !== chantRunId) return;
         beatItems.forEach((item) => item.classList.remove("active"));
         beat.classList.add("active");
         if (index === beatItems.length - 1) {
-          window.setTimeout(() => beat.classList.remove("active"), 480);
+          chantTimers.push(
+            window.setTimeout(() => {
+              beat.classList.remove("active");
+              chantCard?.classList.remove("playing");
+            }, 700)
+          );
         }
-      }, index * 430);
-    });
-  }, 1500);
+      }, index * 560)
+    );
+  });
 }
 
 function showReward(word) {
