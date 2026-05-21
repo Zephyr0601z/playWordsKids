@@ -50,6 +50,13 @@ const lessons = Array.from({ length: Math.ceil(courseWords.length / 4) }, (_, in
 }));
 
 let profileKey = "guest";
+let currentProfile = {
+  name: "Guest",
+  age: "",
+  level: "启蒙",
+  guardian: "",
+  isGuest: true,
+};
 let currentLessonIndex = 0;
 let practicedWords = new Set();
 let stars = 0;
@@ -66,6 +73,9 @@ let lessonMode = "course";
 const appStage = document.querySelector("#appStage");
 const loginScreen = document.querySelector("#loginScreen");
 const kidName = document.querySelector("#kidName");
+const kidAge = document.querySelector("#kidAge");
+const kidLevel = document.querySelector("#kidLevel");
+const guardianName = document.querySelector("#guardianName");
 const profileText = document.querySelector("#profileText");
 const buddy = document.querySelector("#buddy");
 const wordText = document.querySelector("#wordText");
@@ -94,6 +104,32 @@ function storageKey() {
   return `playwords-progress-${profileKey}`;
 }
 
+function profileStorageKey(key = profileKey) {
+  return `playwords-profile-${key}`;
+}
+
+function normalizeProfileKey(name) {
+  return name.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/gi, "-").replace(/^-|-$/g, "") || "little-star";
+}
+
+function saveProfile() {
+  if (currentProfile.isGuest) return;
+  localStorage.setItem(profileStorageKey(), JSON.stringify(currentProfile));
+  localStorage.setItem("playwords-last-profile-key", profileKey);
+}
+
+function loadProfile(key) {
+  if (!key) return null;
+  const raw = localStorage.getItem(profileStorageKey(key));
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
 function saveProgress() {
   localStorage.setItem(
     storageKey(),
@@ -106,6 +142,10 @@ function saveProgress() {
 }
 
 function loadProgress() {
+  currentLessonIndex = 0;
+  stars = 0;
+  practicedWords = new Set();
+
   const raw = localStorage.getItem(storageKey());
   if (!raw) return;
 
@@ -191,10 +231,43 @@ function completeSpokenWord() {
   speak(`Great! ${selectedWord.word}`);
 }
 
-function enterApp(name, isGuest = false) {
-  profileKey = isGuest ? "guest" : name.toLowerCase().replace(/\s+/g, "-");
-  const label = isGuest ? "Guest play time" : `${name}'s play time`;
+function collectProfile(isGuest = false) {
+  if (isGuest) {
+    return {
+      name: "Guest",
+      age: "",
+      level: "体验模式",
+      guardian: "",
+      isGuest: true,
+    };
+  }
+
+  const name = kidName.value.trim() || "Little Star";
+  return {
+    name,
+    age: kidAge.value,
+    level: kidLevel.value,
+    guardian: guardianName.value.trim(),
+    isGuest: false,
+  };
+}
+
+function fillLoginForm(profile) {
+  if (!profile || profile.isGuest) return;
+  kidName.value = profile.name || "";
+  kidAge.value = profile.age || "4";
+  kidLevel.value = profile.level || "启蒙";
+  guardianName.value = profile.guardian || "";
+}
+
+function enterApp(profile) {
+  profileKey = profile.isGuest ? "guest" : normalizeProfileKey(profile.name);
+  currentProfile = profile;
+  const label = profile.isGuest
+    ? "游客体验 · 进度临时保存"
+    : `${currentProfile.name} · ${currentProfile.age}岁 · ${currentProfile.level}`;
   profileText.textContent = label;
+  saveProfile();
   loadProgress();
   starCount.textContent = stars;
   loginScreen.classList.add("hidden");
@@ -565,16 +638,17 @@ function renderHome() {
   });
 }
 
-document.querySelector("#loginBtn").addEventListener("click", () => enterApp(kidName.value.trim() || "Little Star"));
-document.querySelector("#guestBtn").addEventListener("click", () => enterApp("Guest", true));
+document.querySelector("#loginBtn").addEventListener("click", () => enterApp(collectProfile()));
+document.querySelector("#guestBtn").addEventListener("click", () => enterApp(collectProfile(true)));
 document.querySelector("#switchUserBtn").addEventListener("click", () => {
   appStage.classList.add("hidden");
   loginScreen.classList.remove("hidden");
   lessonMode = "course";
+  fillLoginForm(currentProfile);
 });
 
 kidName.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") enterApp(kidName.value.trim() || "Little Star");
+  if (event.key === "Enter") enterApp(collectProfile());
 });
 
 document.querySelector("#listenBtn").addEventListener("click", () => {
@@ -622,3 +696,5 @@ tabs.forEach((tab) => {
 });
 
 document.querySelector("#molePrompt").addEventListener("click", () => speak(currentMoleTarget));
+
+fillLoginForm(loadProfile(localStorage.getItem("playwords-last-profile-key")));

@@ -25,10 +25,39 @@
               <p>玩中学英语</p>
             </div>
           </div>
-          <label class="name-field" for="kidName">
-            <span>Name</span>
-            <input id="kidName" type="text" maxlength="14" placeholder="Lily" autocomplete="name" />
-          </label>
+          <div class="login-copy">
+            <strong>创建学习小档案</strong>
+            <p>保存孩子的课程进度，也可以直接游客体验。</p>
+          </div>
+          <div class="profile-form" aria-label="child profile">
+            <label class="field-card" for="kidName">
+              <span>孩子姓名</span>
+              <input id="kidName" type="text" maxlength="14" placeholder="Lily" autocomplete="name" />
+            </label>
+            <label class="field-card" for="kidAge">
+              <span>年龄</span>
+              <select id="kidAge">
+                <option value="3">3 岁</option>
+                <option value="4" selected>4 岁</option>
+                <option value="5">5 岁</option>
+                <option value="6">6 岁</option>
+                <option value="7">7 岁</option>
+                <option value="8">8 岁</option>
+              </select>
+            </label>
+            <label class="field-card" for="kidLevel">
+              <span>英语基础</span>
+              <select id="kidLevel">
+                <option value="启蒙">启蒙</option>
+                <option value="会听少量单词">会听少量单词</option>
+                <option value="能简单跟读">能简单跟读</option>
+              </select>
+            </label>
+            <label class="field-card" for="guardianName">
+              <span>家长称呼</span>
+              <input id="guardianName" type="text" maxlength="12" placeholder="Mom / Dad" autocomplete="name" />
+            </label>
+          </div>
           <button id="loginBtn" class="login-button">Start</button>
           <button id="guestBtn" class="guest-button">Guest Mode</button>
         </div>
