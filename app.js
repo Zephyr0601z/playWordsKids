@@ -642,10 +642,152 @@ function chantMeaningText(word, expression) {
   return knownMeanings[word.word] || `这是一句关于“${word.zh}”的节奏口令，跟着节拍记住 ${word.word}。`;
 }
 
+const phraseChinese = {
+  "a little cat": "一只小猫",
+  "a happy dog": "一只开心的小狗",
+  "a blue bird": "一只蓝色的小鸟",
+  "a small fish": "一条小鱼",
+  "a red apple": "一个红苹果",
+  "a yellow banana": "一根黄色香蕉",
+  "a sweet cake": "一个甜甜的蛋糕",
+  "a cup of milk": "一杯牛奶",
+  "soft rain": "柔和的雨",
+  "strong wind": "大风",
+  "white snow": "白白的雪",
+  "bright sun": "明亮的太阳",
+  "blue sky": "蓝色的天空",
+  "green leaf": "绿色的叶子",
+  "red heart": "红色的爱心",
+  "my mom": "我的妈妈",
+  "my dad": "我的爸爸",
+  "my family": "我的家庭",
+  "good morning": "早上好",
+  "good night": "晚安",
+  "say hello": "说你好",
+  "say bye": "说再见",
+  "say thanks": "说谢谢",
+  "say sorry": "说对不起",
+  "please help": "请帮忙",
+  "you are welcome": "不用谢",
+};
+
+const sceneChinese = {
+  "I see a cat.": "我看见一只小猫。",
+  "The dog can run.": "小狗会跑。",
+  "The bird can fly.": "小鸟会飞。",
+  "The fish can swim.": "小鱼会游泳。",
+  "I like apples.": "我喜欢苹果。",
+  "I eat a banana.": "我吃一根香蕉。",
+  "This cake is yummy.": "这个蛋糕很好吃。",
+  "I drink milk.": "我喝牛奶。",
+  "I hear the rain.": "我听见雨声。",
+  "The wind blows.": "风吹起来了。",
+  "I see snow.": "我看见雪。",
+  "The sun is up.": "太阳升起来了。",
+  "The sky is blue.": "天空是蓝色的。",
+  "The leaf is green.": "叶子是绿色的。",
+  "I see a heart.": "我看见一个爱心。",
+  "I love Mom.": "我爱妈妈。",
+  "I love Dad.": "我爱爸爸。",
+  "I love my family.": "我爱我的家人。",
+  "Good morning, teacher.": "老师，早上好。",
+  "Good night, Mom.": "妈妈，晚安。",
+  "Hello, my friend.": "你好，我的朋友。",
+  "Bye, see you.": "再见，回头见。",
+  "Thanks, Mom.": "谢谢妈妈。",
+  "Sorry, my friend.": "对不起，我的朋友。",
+  "Please help me.": "请帮帮我。",
+  "Welcome to class.": "欢迎来到课堂。",
+};
+
+const phraseWordChinese = {
+  a: "一个",
+  an: "一个",
+  the: "这个",
+  my: "我的",
+  little: "小小的",
+  happy: "开心的",
+  blue: "蓝色的",
+  small: "小小的",
+  red: "红色的",
+  yellow: "黄色的",
+  sweet: "甜甜的",
+  cup: "杯",
+  of: "",
+  soft: "柔软的",
+  strong: "强壮的",
+  white: "白色的",
+  bright: "明亮的",
+  green: "绿色的",
+  big: "大的",
+  round: "圆圆的",
+  warm: "温暖的",
+  cold: "冷冷的",
+  hot: "热热的",
+  long: "长长的",
+  fast: "快快地",
+  slowly: "慢慢地",
+  cat: "小猫",
+  dog: "小狗",
+  bird: "小鸟",
+  fish: "小鱼",
+  apple: "苹果",
+  banana: "香蕉",
+  cake: "蛋糕",
+  milk: "牛奶",
+  rain: "雨",
+  wind: "风",
+  snow: "雪",
+  sun: "太阳",
+  sky: "天空",
+  leaf: "叶子",
+  heart: "爱心",
+  mom: "妈妈",
+  dad: "爸爸",
+  family: "家人",
+  ball: "球",
+  book: "书",
+  run: "跑",
+  jump: "跳",
+  clap: "拍手",
+  sing: "唱歌",
+  hello: "你好",
+  bye: "再见",
+  thanks: "谢谢",
+  sorry: "对不起",
+  please: "请",
+  help: "帮忙",
+  welcome: "欢迎",
+};
+
+function normalizeExpressionKey(text) {
+  return text.trim().toLowerCase();
+}
+
+function lookupChinese(map, text) {
+  const normalized = normalizeExpressionKey(text);
+  return Object.entries(map).find(([key]) => normalizeExpressionKey(key) === normalized)?.[1];
+}
+
+function translatePhraseFromParts(text, word) {
+  const parts = normalizeExpressionKey(text)
+    .replace(/[.!?]/g, "")
+    .split(/\s+/)
+    .map((part) => phraseWordChinese[part] ?? (part === word.word.toLowerCase() ? word.zh : part))
+    .filter(Boolean);
+  return parts.join("");
+}
+
+function readableExpressionChinese(text, word, type) {
+  const exactChinese = lookupChinese(type === "phrase" ? phraseChinese : sceneChinese, text);
+  if (exactChinese) return exactChinese;
+  if (type === "phrase") return translatePhraseFromParts(text, word);
+  return `${word.zh}相关句子`;
+}
+
 function expressionChineseText(word, type) {
-  if (type === "phrase") return `${word.zh}的常用短语`;
-  if (type === "scene") return `含有${word.zh}的场景句`;
-  return word.zh;
+  const expression = getWordExpression(word);
+  return readableExpressionChinese(expression[type], word, type);
 }
 
 function chantBeatsFor(text) {
