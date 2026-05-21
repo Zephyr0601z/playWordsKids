@@ -1498,11 +1498,11 @@ function showMatchPlaneReward() {
   matchPlaneReward.classList.remove("fly");
   requestAnimationFrame(() => matchPlaneReward.classList.add("fly"));
   playJetTakeoffSound();
-  window.setTimeout(() => speak("Great match. Flying high!", { rate: 0.72, pitch: 1.28 }), 650);
+  window.setTimeout(() => speak("Super match. Rocket speed!", { rate: 0.7, pitch: 1.34, volume: 1 }), 760);
   matchPlaneTimer = window.setTimeout(() => {
     matchPlaneReward.classList.add("hidden");
     matchPlaneReward.classList.remove("fly");
-  }, 2600);
+  }, 3200);
 }
 
 function playJetTakeoffSound() {
@@ -1513,21 +1513,31 @@ function playJetTakeoffSound() {
   const now = audio.currentTime;
   const master = audio.createGain();
   master.gain.setValueAtTime(0.0001, now);
-  master.gain.exponentialRampToValueAtTime(0.22, now + 0.08);
-  master.gain.exponentialRampToValueAtTime(0.0001, now + 1.45);
+  master.gain.exponentialRampToValueAtTime(0.42, now + 0.06);
+  master.gain.exponentialRampToValueAtTime(0.0001, now + 1.9);
   master.connect(audio.destination);
 
   const roar = audio.createOscillator();
   const roarGain = audio.createGain();
   roar.type = "sawtooth";
-  roar.frequency.setValueAtTime(80, now);
-  roar.frequency.exponentialRampToValueAtTime(360, now + 1.1);
-  roarGain.gain.setValueAtTime(0.16, now);
-  roarGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.35);
+  roar.frequency.setValueAtTime(54, now);
+  roar.frequency.exponentialRampToValueAtTime(520, now + 1.35);
+  roarGain.gain.setValueAtTime(0.24, now);
+  roarGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.75);
   roar.connect(roarGain);
   roarGain.connect(master);
 
-  const whooshBuffer = audio.createBuffer(1, audio.sampleRate * 1.2, audio.sampleRate);
+  const booster = audio.createOscillator();
+  const boosterGain = audio.createGain();
+  booster.type = "square";
+  booster.frequency.setValueAtTime(130, now);
+  booster.frequency.exponentialRampToValueAtTime(920, now + 0.9);
+  boosterGain.gain.setValueAtTime(0.08, now);
+  boosterGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.15);
+  booster.connect(boosterGain);
+  boosterGain.connect(master);
+
+  const whooshBuffer = audio.createBuffer(1, audio.sampleRate * 1.55, audio.sampleRate);
   const channel = whooshBuffer.getChannelData(0);
   for (let index = 0; index < channel.length; index += 1) {
     const fade = 1 - index / channel.length;
@@ -1538,19 +1548,34 @@ function playJetTakeoffSound() {
   const whooshGain = audio.createGain();
   whoosh.buffer = whooshBuffer;
   whooshFilter.type = "highpass";
-  whooshFilter.frequency.setValueAtTime(420, now);
-  whooshFilter.frequency.exponentialRampToValueAtTime(1800, now + 0.9);
-  whooshGain.gain.setValueAtTime(0.12, now);
-  whooshGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+  whooshFilter.frequency.setValueAtTime(260, now);
+  whooshFilter.frequency.exponentialRampToValueAtTime(2600, now + 1.2);
+  whooshGain.gain.setValueAtTime(0.2, now);
+  whooshGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.55);
   whoosh.connect(whooshFilter);
   whooshFilter.connect(whooshGain);
   whooshGain.connect(master);
 
+  const sparkle = audio.createOscillator();
+  const sparkleGain = audio.createGain();
+  sparkle.type = "triangle";
+  sparkle.frequency.setValueAtTime(820, now + 0.18);
+  sparkle.frequency.exponentialRampToValueAtTime(2100, now + 0.56);
+  sparkleGain.gain.setValueAtTime(0.0001, now + 0.16);
+  sparkleGain.gain.exponentialRampToValueAtTime(0.11, now + 0.24);
+  sparkleGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.72);
+  sparkle.connect(sparkleGain);
+  sparkleGain.connect(master);
+
   roar.start(now);
-  roar.stop(now + 1.45);
+  roar.stop(now + 1.85);
+  booster.start(now);
+  booster.stop(now + 1.2);
   whoosh.start(now);
-  whoosh.stop(now + 1.25);
-  window.setTimeout(() => audio.close(), 1600);
+  whoosh.stop(now + 1.6);
+  sparkle.start(now + 0.16);
+  sparkle.stop(now + 0.78);
+  window.setTimeout(() => audio.close(), 2100);
 }
 
 function maybeCompleteMatchRound() {
