@@ -639,11 +639,14 @@ function speechStyle(text, lang = "en") {
 
 function speak(text, options = {}) {
   if (!("speechSynthesis" in window)) return Promise.resolve();
-  window.speechSynthesis.cancel();
+  if (options.cancel !== false) window.speechSynthesis.cancel();
   return new Promise((resolve) => {
     const utterance = new SpeechSynthesisUtterance(text);
     const lang = options.lang || "en";
-    const fallbackTimer = window.setTimeout(resolve, options.fallbackMs || Math.max(900, text.length * 180));
+    const fallbackMs =
+      options.fallbackMs ||
+      (lang === "zh" ? Math.max(1600, text.length * 360 + 600) : Math.max(900, text.length * 210));
+    const fallbackTimer = window.setTimeout(resolve, fallbackMs);
     utterance.lang = lang === "zh" ? "zh-CN" : "en-US";
     const voice = chooseFriendlyVoice(lang);
     const style = speechStyle(text, lang);
@@ -768,7 +771,128 @@ function chantMeaningText(word, expression) {
     Book: "书，书，看一看。",
     Ball: "球，球，弹一弹。",
   };
-  return knownMeanings[word.word] || `这是一句关于“${word.zh}”的节奏口令，跟着节拍记住 ${word.word}。`;
+  return knownMeanings[word.word] || translateChant(expression.rhyme, word);
+}
+
+const chantTailChinese = {
+  "under the sun": "在太阳下面跑。",
+  "up and down": "上上下下跳。",
+  "make a sound": "发出声音。",
+  "ding ding": "叮叮唱。",
+  "sleepy head": "困困的小脑袋。",
+  "drink it up": "喝光光。",
+  "roar with me": "和我一起吼。",
+  "hop on a log": "跳到木头上。",
+  "buzz with me": "和我一起嗡嗡叫。",
+  "quack quack": "嘎嘎叫。",
+  "tap the peg": "轻轻敲一敲。",
+  "sweet and cool": "甜甜又凉凉。",
+  "very nice": "非常好。",
+  "crunchy bite": "咔嚓咬一口。",
+  "move your feet": "动动你的脚。",
+  "count the sheep": "数小羊。",
+  "learn and grow": "学习长大。",
+  "color more": "再涂一点颜色。",
+  "one step more": "再走一步。",
+  "sit right there": "坐在那里。",
+  "light the room": "点亮房间。",
+  "share your joy": "分享快乐。",
+  "touch your head": "摸摸你的头。",
+  "i see you": "我看见你。",
+  "soft and mellow": "柔柔软软。",
+  "nice and clean": "干净又漂亮。",
+  "learning is fun": "学习真有趣。",
+  "me and you": "我和你。",
+  "count with me": "和我一起数。",
+  "open the door": "打开门。",
+  "sing a song": "唱一首歌。",
+  "wave to me": "向我挥挥手。",
+  "nod your head": "点点头。",
+  "look up high": "向高处看。",
+  "smell a rose": "闻一闻玫瑰。",
+  "make a band": "组成小乐队。",
+  "tap tap tap": "拍拍拍。",
+  "hug mom and dad": "抱抱妈妈和爸爸。",
+  "rest your head": "让小脑袋休息。",
+  "sunny day": "晴朗的一天。",
+  "pat your hat": "拍拍帽子。",
+  "choose your shoes": "选一选鞋子。",
+  "button your coat": "扣好外套。",
+  "tick tock": "滴答滴答。",
+  "run in the sun": "在阳光下跑。",
+  "tap the pane": "敲敲窗玻璃。",
+  "spin and grin": "转一转，笑一笑。",
+  "soft and slow": "轻轻慢慢。",
+  "round we go": "圆圆地转。",
+  "shine afar": "远远发光。",
+  "draw it there": "在那里画出来。",
+  "love is art": "爱像艺术一样美。",
+};
+
+const chantWordChinese = {
+  say: "说",
+  touch: "摸摸",
+  your: "你的",
+  head: "头",
+  clap: "拍拍手",
+  like: "像",
+  that: "那样",
+  fly: "飞",
+  high: "高高地",
+  swim: "游泳",
+  run: "跑",
+  jump: "跳",
+  dance: "跳舞",
+  sing: "唱歌",
+  look: "看",
+  listen: "听",
+  wave: "挥挥手",
+  smile: "微笑",
+  play: "玩",
+  read: "阅读",
+  draw: "画画",
+  eat: "吃",
+  drink: "喝",
+  sleep: "睡觉",
+  go: "走",
+  come: "来",
+  help: "帮忙",
+  count: "数数",
+  with: "和",
+  me: "我",
+  you: "你",
+  mom: "妈妈",
+  dad: "爸爸",
+  friend: "朋友",
+  happy: "开心",
+  soft: "柔软",
+  warm: "温暖",
+  bright: "明亮",
+  fast: "快速",
+  slow: "慢慢",
+  big: "大大的",
+  small: "小小的",
+};
+
+function translateChantTail(text) {
+  const key = normalizeExpressionKey(text.replace(/[.!?]/g, ""));
+  if (chantTailChinese[key]) return chantTailChinese[key];
+  return key
+    .split(/\s+/)
+    .map((part) => chantWordChinese[part] || phraseWordChinese[part] || part)
+    .filter(Boolean)
+    .join("");
+}
+
+function translateChant(rhyme, word) {
+  const parts = rhyme
+    .replace(/[.!?]/g, "")
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const tail = parts.slice(2).join(" ") || parts.slice(1).join(" ");
+  const translatedTail = translateChantTail(tail);
+  return translatedTail ? `${word.zh}，${word.zh}，${translatedTail}` : `${word.zh}，${word.zh}。`;
 }
 
 const phraseChinese = {
@@ -1531,7 +1655,7 @@ function renderParentReport() {
     .map((item) => `<div class="report-row"><strong>${item.title}</strong><span>${item.value}</span></div>`)
     .join("");
   const coachingWord = reviewWords[0] || currentLesson().words[0];
-  parentTip.textContent = `陪练建议：睡前问孩子 “Can you say ${coachingWord.word}?”，再让孩子说中文意思“${coachingWord.zh}”。`;
+  parentTip.textContent = `陪练建议：睡前问孩子 “Can you say ${coachingWord.word}?”，再让孩子说“${coachingWord.zh}”。`;
 }
 
 document.querySelector("#loginBtn").addEventListener("click", () => enterApp(collectProfile()));
