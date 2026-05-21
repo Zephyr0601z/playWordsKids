@@ -573,7 +573,7 @@ function speak(text, options = {}) {
   return new Promise((resolve) => {
     const utterance = new SpeechSynthesisUtterance(text);
     const lang = options.lang || "en";
-    const fallbackTimer = window.setTimeout(resolve, Math.max(900, text.length * 180));
+    const fallbackTimer = window.setTimeout(resolve, options.fallbackMs || Math.max(900, text.length * 180));
     utterance.lang = lang === "zh" ? "zh-CN" : "en-US";
     const voice = chooseFriendlyVoice(lang);
     const style = speechStyle(text, lang);
@@ -594,12 +594,13 @@ function speak(text, options = {}) {
 }
 
 function speakChinese(text, options = {}) {
-  speak(text, { lang: "zh", ...options });
+  return speak(text, { lang: "zh", ...options });
 }
 
-function speakWordWithMeaning(word) {
-  speak(word.word);
-  window.setTimeout(() => speakChinese(word.zh), 850);
+async function speakWordWithMeaning(word) {
+  await speakChinese(`中文意思：${word.zh}`, { rate: 0.76, pitch: 1.08 });
+  await new Promise((resolve) => window.setTimeout(resolve, 420));
+  speak(word.word, { rate: 0.68, pitch: 1.32 });
 }
 
 if ("speechSynthesis" in window) {
@@ -691,26 +692,18 @@ async function playChant() {
   animateBuddy("happy");
   await speakChinese(chantMeaningText(selectedWord, expression), { rate: 0.72, pitch: 1.08 });
   if (runId !== chantRunId) return;
-  await wait(650);
+  await wait(720);
+  for (const beat of beatItems) {
+    if (runId !== chantRunId) return;
+    beatItems.forEach((item) => item.classList.remove("active"));
+    beat.classList.add("active");
+    animateBuddy("happy");
+    await speak(beat.textContent, { rate: 0.58, pitch: 1.3, fallbackMs: 620 });
+    await wait(160);
+  }
   if (runId !== chantRunId) return;
-  speak(expression.rhyme, { rate: 0.62, pitch: 1.28 });
-  beatItems.forEach((beat, index) => {
-    chantTimers.push(
-      window.setTimeout(() => {
-        if (runId !== chantRunId) return;
-        beatItems.forEach((item) => item.classList.remove("active"));
-        beat.classList.add("active");
-        if (index === beatItems.length - 1) {
-          chantTimers.push(
-            window.setTimeout(() => {
-              beat.classList.remove("active");
-              chantCard?.classList.remove("playing");
-            }, 700)
-          );
-        }
-      }, index * 560)
-    );
-  });
+  beatItems.forEach((item) => item.classList.remove("active"));
+  chantCard?.classList.remove("playing");
 }
 
 function showReward(word) {
