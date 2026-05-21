@@ -618,17 +618,94 @@ const artPalettes = {
   Core: ["#7ba7b4", "#f2cf8f", "#fff5df"],
 };
 
-function artMotif(section, action) {
-  if (section === "Animals") return `<circle class="art-ear left" cx="35" cy="34" r="12" /><circle class="art-ear right" cx="65" cy="34" r="12" /><ellipse class="art-body" cx="50" cy="57" rx="25" ry="21" /><path class="art-smile" d="M39 60 Q50 70 61 60" />`;
-  if (section === "Food") return `<path class="art-body" d="M32 67 C25 43 43 28 58 38 C73 31 83 49 70 70 C59 86 39 84 32 67Z" /><path class="art-leaf" d="M57 34 C70 20 82 28 69 40 C61 46 54 42 57 34Z" />`;
-  if (section === "Weather") return `<path class="art-cloud" d="M25 60 H75 C86 60 86 47 74 46 C70 32 50 32 46 47 C35 40 20 49 25 60Z" /><path class="art-rain" d="M36 71 L31 82 M52 70 L47 84 M68 71 L63 82" />`;
-  if (section === "Transport") return `<path class="art-wing" d="M20 59 L80 33 L66 65 L88 78 L75 88 L55 74 L36 83 Z" /><path class="art-line" d="M24 78 C39 72 54 65 70 55" />`;
+function iconCat() {
+  return `<path class="art-body" d="M27 53 L34 31 L45 42 Q50 39 55 42 L66 31 L73 53 Q73 76 50 78 Q27 76 27 53Z" /><circle class="art-eye" cx="42" cy="57" r="3" /><circle class="art-eye" cx="58" cy="57" r="3" /><path class="art-smile" d="M43 65 Q50 71 57 65" />`;
+}
+
+function iconDog() {
+  return `<ellipse class="art-body" cx="50" cy="58" rx="25" ry="21" /><path class="art-ear left" d="M31 43 C19 42 20 65 32 66" /><path class="art-ear right" d="M69 43 C81 42 80 65 68 66" /><circle class="art-eye" cx="42" cy="56" r="3" /><circle class="art-eye" cx="58" cy="56" r="3" /><path class="art-smile" d="M42 66 Q50 72 58 66" />`;
+}
+
+function iconBird() {
+  return `<ellipse class="art-body" cx="52" cy="56" rx="22" ry="19" /><path class="art-wing" d="M36 57 C20 47 21 75 38 68" /><path class="art-beak" d="M70 55 L86 62 L70 67Z" /><circle class="art-eye" cx="57" cy="50" r="3" /><path class="art-line" d="M41 78 L35 86 M55 78 L59 86" />`;
+}
+
+function iconFish() {
+  return `<path class="art-body" d="M25 58 C38 36 70 39 78 58 C70 77 38 80 25 58Z" /><path class="art-wing" d="M76 58 L91 45 L91 71Z" /><circle class="art-eye" cx="43" cy="54" r="3" /><path class="art-wave soft" d="M18 76 C28 68 37 84 47 76 C57 68 66 84 76 76" />`;
+}
+
+function iconApple() {
+  return `<path class="art-body" d="M31 66 C23 44 38 32 50 42 C62 32 77 44 69 66 C62 84 38 84 31 66Z" /><path class="art-line" d="M50 41 C50 33 54 28 61 25" /><path class="art-leaf" d="M58 28 C70 20 78 31 64 38" />`;
+}
+
+function iconBanana() {
+  return `<path class="art-body" d="M25 62 C42 79 70 76 82 43 C67 60 45 66 29 48 C27 53 26 58 25 62Z" /><path class="art-line" d="M34 58 C48 68 65 63 76 49" />`;
+}
+
+function iconBook() {
+  return `<path class="art-body" d="M22 36 C35 31 44 34 50 40 C56 34 65 31 78 36 V75 C66 70 57 72 50 79 C43 72 34 70 22 75Z" /><path class="art-line" d="M50 40 V78 M31 47 H43 M57 47 H70 M31 57 H42 M58 57 H70" />`;
+}
+
+function iconVehicle(type = "car") {
+  if (type === "plane" || type === "rocket") return `<path class="art-wing" d="M20 59 L80 33 L66 65 L88 78 L75 88 L55 74 L36 83Z" /><path class="art-line" d="M24 78 C39 72 54 65 70 55" />`;
+  if (type === "boat" || type === "ship") return `<path class="art-body" d="M24 60 H82 L70 78 H34Z" /><path class="art-wing" d="M48 34 V58 H70 C64 47 58 39 48 34Z" /><path class="art-wave soft" d="M21 83 C32 75 42 91 53 83 C64 75 74 91 85 83" />`;
+  return `<path class="art-body" d="M23 57 H31 L38 43 H65 L75 57 H82 V73 H23Z" /><circle class="art-dot" cx="37" cy="75" r="7" /><circle class="art-dot" cx="68" cy="75" r="7" /><path class="art-line" d="M41 49 H61" />`;
+}
+
+function iconWeather(type) {
+  if (type === "sun" || type === "sunny" || type === "hot") return `<circle class="art-body" cx="50" cy="55" r="19" /><path class="art-line" d="M50 24 V34 M50 76 V86 M19 55 H29 M71 55 H82 M28 33 L35 40 M65 70 L72 77 M72 33 L65 40 M35 70 L28 77" />`;
+  if (type === "rain" || type === "storm") return `<path class="art-cloud" d="M25 55 H75 C86 55 86 42 74 41 C70 27 50 27 46 42 C35 35 20 44 25 55Z" /><path class="art-rain" d="M36 66 L31 80 M52 65 L47 82 M68 66 L63 80" />`;
+  if (type === "snow" || type === "cold") return `<path class="art-spark" d="M50 29 V80 M30 40 L70 69 M70 40 L30 69 M38 31 L50 42 L62 31 M38 78 L50 67 L62 78" />`;
+  return `<path class="art-cloud" d="M25 60 H75 C86 60 86 47 74 46 C70 32 50 32 46 47 C35 40 20 49 25 60Z" />`;
+}
+
+function iconPerson(kind = "person") {
+  const hair = kind === "mom" || kind === "girl" || kind === "sister" ? `<path class="art-ear" d="M29 53 C28 29 72 29 71 53 C67 39 33 39 29 53Z" />` : "";
+  return `${hair}<circle class="art-body" cx="50" cy="45" r="16" /><path class="art-body" d="M27 82 C31 65 69 65 73 82Z" /><circle class="art-eye" cx="44" cy="45" r="2.7" /><circle class="art-eye" cx="56" cy="45" r="2.7" /><path class="art-smile" d="M43 53 Q50 58 57 53" />`;
+}
+
+function iconShape(name) {
+  if (name === "circle" || name === "oval") return `<circle class="art-shape" cx="50" cy="56" r="24" />`;
+  if (name === "triangle") return `<path class="art-shape" d="M50 28 L78 77 H22Z" />`;
+  if (name === "diamond") return `<path class="art-shape" d="M50 25 L78 55 L50 85 L22 55Z" />`;
+  if (name === "star") return `<path class="art-spark" d="M50 25 L58 44 L79 45 L63 59 L68 80 L50 68 L32 80 L37 59 L21 45 L42 44Z" />`;
+  if (name === "heart") return `<path class="art-body" d="M50 78 C27 61 24 43 37 35 C45 30 50 38 50 38 C50 38 55 30 63 35 C76 43 73 61 50 78Z" />`;
+  return `<rect class="art-shape" x="27" y="34" width="46" height="42" rx="9" />`;
+}
+
+function iconObject(name, section, action) {
+  if (["cat", "lion", "tiger", "rabbit", "bear", "monkey", "cow", "pig", "sheep", "horse", "frog", "duck", "bee"].includes(name)) {
+    if (name === "bird" || name === "bee" || name === "duck") return iconBird();
+    return name === "dog" ? iconDog() : iconCat();
+  }
+  if (name === "bird" || name === "bee" || name === "duck") return iconBird();
+  if (name === "fish") return iconFish();
+  if (name === "apple") return iconApple();
+  if (name === "banana") return iconBanana();
+  if (["cake", "cookie", "pizza", "bread", "cheese"].includes(name)) return `<path class="art-body" d="M25 68 L75 42 V76 H25Z" /><path class="art-line" d="M31 62 H67 M39 55 H69" /><circle class="art-dot" cx="45" cy="67" r="4" />`;
+  if (["milk", "water", "juice", "soup"].includes(name)) return `<path class="art-body" d="M35 32 H65 L70 78 H30Z" /><path class="art-line" d="M34 51 H66" /><path class="art-wave soft" d="M36 65 C43 58 50 72 57 65 C62 60 66 63 69 66" />`;
+  if (["book", "read", "paper"].includes(name)) return iconBook();
+  if (["car", "bus", "train", "taxi", "truck", "scooter", "bike", "subway"].includes(name)) return iconVehicle("car");
+  if (["plane", "rocket"].includes(name)) return iconVehicle("plane");
+  if (["boat", "ship"].includes(name)) return iconVehicle("boat");
+  if (["sun", "sunny", "hot", "warm"].includes(name)) return iconWeather("sun");
+  if (["rain", "storm", "cloud", "foggy"].includes(name)) return iconWeather("rain");
+  if (["snow", "cold"].includes(name)) return iconWeather("snow");
+  if (["circle", "oval", "square", "rectangle", "triangle", "diamond", "star", "heart"].includes(name)) return iconShape(name);
+  if (["mom", "dad", "baby", "grandma", "grandpa", "sister", "brother", "friend", "boy", "girl", "teacher", "family"].includes(name)) return iconPerson(name);
+  if (["bed", "chair", "sofa", "pillow", "table", "desk"].includes(name)) return `<path class="art-body" d="M25 52 H75 V74 H25Z" /><path class="art-line" d="M29 74 V84 M71 74 V84 M30 49 C36 39 50 43 50 52" />`;
+  if (["door", "window", "lamp", "clock", "tv", "phone"].includes(name)) return `<rect class="art-shape" x="31" y="33" width="38" height="45" rx="8" /><circle class="art-dot" cx="61" cy="56" r="4" /><path class="art-line" d="M39 42 H57 M39 66 H57" />`;
+  if (["hat", "shoes", "coat", "socks", "shirt", "pants", "dress", "skirt", "shorts", "scarf", "gloves", "boots"].includes(name)) return `<path class="art-body" d="M32 40 C42 31 58 31 68 40 L62 78 H38Z" /><path class="art-line" d="M43 42 V75 M57 42 V75" />`;
+  if (["run", "jump", "clap", "sing", "dance", "walk", "swim", "eat", "drink", "look", "listen", "smile", "wash"].includes(name)) return `<circle class="art-body" cx="50" cy="38" r="12" /><path class="art-line" d="M50 51 L44 70 M50 51 L65 62 M45 57 L32 50 M52 58 L63 46" /><path class="art-wave soft" d="M24 80 C35 72 45 88 56 80 C67 72 76 88 87 80" />`;
   if (section === "Nature") return `<path class="art-leaf" d="M28 73 C46 24 77 25 83 70 C62 61 46 65 28 73Z" /><path class="art-line" d="M43 72 C51 55 61 42 75 31" />`;
-  if (section === "Shapes") return `<rect class="art-shape" x="29" y="35" width="42" height="42" rx="11" transform="rotate(9 50 56)" /><circle class="art-dot" cx="29" cy="34" r="5" />`;
-  if (section === "Numbers") return `<circle class="art-orbit" cx="50" cy="55" r="29" /><path class="art-line" d="M30 68 C42 55 57 47 73 38" /><circle class="art-dot" cx="76" cy="40" r="6" />`;
+  if (section === "Shapes") return iconShape(name);
   if (action === "flap") return `<path class="art-wing" d="M22 58 C37 34 53 39 48 68 C37 71 29 66 22 58Z" /><path class="art-wing" d="M78 58 C63 34 47 39 52 68 C63 71 71 66 78 58Z" />`;
   if (action === "swim") return `<path class="art-wave" d="M22 67 C33 55 43 79 54 67 C65 55 75 79 86 67" /><path class="art-wave soft" d="M30 78 C39 70 48 85 57 78 C66 70 74 85 83 78" />`;
   return `<path class="art-spark" d="M24 35 L31 48 L45 51 L34 60 L36 74 L24 67 L12 74 L14 60 L3 51 L17 48Z" /><circle class="art-dot" cx="74" cy="34" r="7" />`;
+}
+
+function artMotif(word, section) {
+  return iconObject(word.word.toLowerCase(), section, word.action);
 }
 
 function wordArt(word, size = "medium") {
@@ -643,7 +720,7 @@ function wordArt(word, size = "medium") {
         <path class="art-hill" d="M15 75 C32 61 48 75 64 64 C75 57 84 63 91 70 L91 92 L15 92Z" />
         <circle class="art-sun" cx="76" cy="25" r="9" />
         <path class="art-doodle" d="M21 29 C28 24 33 25 38 29 M65 75 C72 73 78 76 82 81" />
-        ${artMotif(section, word.action)}
+        ${artMotif(word, section)}
         <rect class="art-letter-badge" x="35" y="73" width="30" height="18" rx="8" />
         <text x="50" y="82" text-anchor="middle">${letter}</text>
       </svg>

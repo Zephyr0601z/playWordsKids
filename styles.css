@@ -1284,7 +1284,9 @@ h1 {
 
 .art-sun,
 .art-dot,
-.art-spark {
+.art-spark,
+.art-eye,
+.art-beak {
   fill: var(--art-primary);
   opacity: 0.92;
 }
