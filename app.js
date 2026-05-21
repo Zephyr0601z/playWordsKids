@@ -416,6 +416,8 @@ const homeLessonStatus = document.querySelector("#homeLessonStatus");
 const todayWords = document.querySelector("#todayWords");
 const reviewCount = document.querySelector("#reviewCount");
 const courseMap = document.querySelector("#courseMap");
+const questList = document.querySelector("#questList");
+const stickerShelf = document.querySelector("#stickerShelf");
 const screens = document.querySelectorAll(".screen");
 const tabs = document.querySelectorAll(".tab");
 
@@ -1033,11 +1035,40 @@ function renderHome() {
   const lesson = currentLesson();
   const done = lesson.words.filter((word) => practicedWords.has(word.word)).length;
   const learned = learnedWords();
+  const questItems = [
+    { icon: "🎧", title: "Listen", text: `${done}/${lesson.words.length} words`, done: done > 0 },
+    { icon: "🗣️", title: "Speak", text: done === lesson.words.length ? "Ready for next" : "Say today words", done: done === lesson.words.length },
+    { icon: "⭐", title: "Collect", text: `${stars} stars`, done: stars >= (currentLessonIndex + 1) * 4 },
+  ];
+  const stickerWords = learned.length ? learned.slice(-6) : lesson.words.slice(0, 4);
   homeLessonTag.textContent = `${lesson.section} · Lesson ${currentLessonIndex + 1}`;
   homeLessonTitle.textContent = lesson.title;
   homeLessonStatus.textContent = `${done}/${lesson.words.length} words`;
   reviewCount.textContent = `${learned.length} learned`;
   document.querySelector("#reviewBtn").disabled = learned.length === 0;
+  questList.innerHTML = questItems
+    .map(
+      (quest) => `
+        <div class="quest-item ${quest.done ? "done" : ""}">
+          <span>${quest.icon}</span>
+          <div>
+            <strong>${quest.title}</strong>
+            <small>${quest.text}</small>
+          </div>
+        </div>
+      `
+    )
+    .join("");
+  stickerShelf.innerHTML = stickerWords
+    .map(
+      (word, index) => `
+        <button class="sticker ${learned.length || index === 0 ? "unlocked" : ""}" data-word="${word.word}">
+          <span>${word.emoji}</span>
+          <small>${word.word}</small>
+        </button>
+      `
+    )
+    .join("");
   todayWords.innerHTML = lesson.words
     .map(
       (word) => `
@@ -1078,6 +1109,13 @@ function renderHome() {
         const target = document.querySelector(`.word-card[data-word="${word.word}"]`);
         if (target) target.click();
       }, 0);
+    });
+  });
+
+  document.querySelectorAll(".sticker.unlocked").forEach((sticker) => {
+    const word = courseWords.find((item) => item.word === sticker.dataset.word);
+    sticker.addEventListener("click", () => {
+      if (word) speakWordWithMeaning(word);
     });
   });
 }
@@ -1126,6 +1164,14 @@ document.querySelector("#reviewBtn").addEventListener("click", () => {
   lessonMode = "review";
   refreshGames();
   setActiveScreen("lesson");
+});
+
+document.querySelectorAll(".game-launcher").forEach((button) => {
+  button.addEventListener("click", () => {
+    setActiveScreen(button.dataset.game);
+    if (button.dataset.game === "match") renderMatchGame();
+    if (button.dataset.game === "mole") renderMoleGame();
+  });
 });
 
 nextLessonBtn.addEventListener("click", () => {

@@ -90,13 +90,60 @@
         </nav>
 
         <section id="home" class="screen active-screen">
-          <div class="home-grid">
-            <article class="continue-panel">
-              <span id="homeLessonTag">Lesson 1</span>
-              <h2 id="homeLessonTitle">Hello Animals</h2>
-              <p id="homeLessonStatus">0/4 words</p>
-              <button id="continueBtn" class="big-action listen">Continue</button>
+          <div class="home-dashboard">
+            <article class="adventure-panel">
+              <div class="adventure-copy">
+                <span id="homeLessonTag">Lesson 1</span>
+                <h2 id="homeLessonTitle">Hello Animals</h2>
+                <p id="homeLessonStatus">0/4 words</p>
+                <button id="continueBtn" class="big-action listen">Start Adventure</button>
+              </div>
+              <div class="adventure-scene" aria-hidden="true">
+                <div class="scene-sun"></div>
+                <div class="scene-path">
+                  <span class="path-node done">1</span>
+                  <span class="path-node active">2</span>
+                  <span class="path-node">3</span>
+                </div>
+                <div class="home-buddy">
+                  <span>Go!</span>
+                </div>
+              </div>
             </article>
+
+            <article class="quest-panel">
+              <div class="panel-title">
+                <span>Today</span>
+                <strong>3 Quests</strong>
+              </div>
+              <div id="questList" class="quest-list"></div>
+            </article>
+
+            <article class="buddy-room">
+              <div class="panel-title">
+                <span>Buddy</span>
+                <strong>Reward Room</strong>
+              </div>
+              <div class="buddy-stage" aria-hidden="true">
+                <span class="room-star">★</span>
+                <span class="room-badge">P</span>
+                <span class="room-cape"></span>
+              </div>
+              <div id="stickerShelf" class="sticker-shelf"></div>
+            </article>
+
+            <article class="game-panel">
+              <div class="panel-title">
+                <span>Games</span>
+                <strong>Play More</strong>
+              </div>
+              <div class="game-launchers">
+                <button class="game-launcher" data-game="sound"><span>🔊</span><strong>Sound Hunt</strong></button>
+                <button class="game-launcher" data-game="match"><span>🧩</span><strong>Word Match</strong></button>
+                <button class="game-launcher" data-game="mole"><span>🎯</span><strong>Tap Time</strong></button>
+              </div>
+            </article>
+
             <article class="today-panel">
               <div class="panel-title">
                 <span>Today</span>
@@ -113,8 +160,8 @@
             </article>
             <article class="map-panel">
               <div class="panel-title">
-                <span>Plan</span>
-                <strong>Course Map</strong>
+                <span>Map</span>
+                <strong>Adventure Road</strong>
               </div>
               <div id="courseMap" class="course-map"></div>
             </article>
