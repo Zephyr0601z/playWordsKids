@@ -104,6 +104,7 @@ let currentSoundWord = lessons[0].words[0];
 let recognition = null;
 let isListening = false;
 let lessonMode = "course";
+let preferredVoice = null;
 
 const appStage = document.querySelector("#appStage");
 const loginScreen = document.querySelector("#loginScreen");
@@ -231,14 +232,48 @@ function sample(items, count) {
   return [...items].sort(() => Math.random() - 0.5).slice(0, count);
 }
 
-function speak(text) {
+function chooseFriendlyVoice() {
+  if (preferredVoice || !("speechSynthesis" in window)) return preferredVoice;
+  const voices = window.speechSynthesis.getVoices();
+  const englishVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith("en"));
+  const preferredNames = ["samantha", "karen", "moira", "tessa", "zira", "aria", "jenny", "female"];
+  preferredVoice =
+    englishVoices.find((voice) => preferredNames.some((name) => voice.name.toLowerCase().includes(name))) ||
+    englishVoices.find((voice) => voice.lang.toLowerCase() === "en-us") ||
+    englishVoices[0] ||
+    null;
+  return preferredVoice;
+}
+
+function speechStyle(text) {
+  const isShortWord = /^[a-z]+$/i.test(text.trim());
+  const isRhyme = text.includes(",") || text.split(" ").length > 5;
+  return {
+    rate: isShortWord ? 0.7 : isRhyme ? 0.76 : 0.72,
+    pitch: isShortWord ? 1.34 : 1.22,
+    volume: 0.92,
+  };
+}
+
+function speak(text, options = {}) {
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "en-US";
-  utterance.rate = 0.74;
-  utterance.pitch = 1.25;
+  const voice = chooseFriendlyVoice();
+  const style = speechStyle(text);
+  if (voice) utterance.voice = voice;
+  utterance.rate = options.rate || style.rate;
+  utterance.pitch = options.pitch || style.pitch;
+  utterance.volume = options.volume || style.volume;
   window.speechSynthesis.speak(utterance);
+}
+
+if ("speechSynthesis" in window) {
+  window.speechSynthesis.addEventListener("voiceschanged", () => {
+    preferredVoice = null;
+    chooseFriendlyVoice();
+  });
 }
 
 function normalizeSpeech(text) {
@@ -290,7 +325,7 @@ function completeSpokenWord() {
   markPracticed(selectedWord);
   addStar();
   showReward(selectedWord);
-  speak(`Great! ${selectedWord.word}`);
+  speak(`Great job. ${selectedWord.word}`, { rate: 0.72, pitch: 1.28 });
 }
 
 function collectProfile(isGuest = false) {
@@ -342,7 +377,7 @@ function enterApp(profile) {
   renderHome();
   updateVoiceFallback();
   setActiveScreen("home");
-  window.setTimeout(() => speak("Welcome. Let's play English!"), 350);
+  window.setTimeout(() => speak("Hi, little star. Let's play English!", { rate: 0.72, pitch: 1.3 }), 350);
 }
 
 function addStar() {
@@ -418,14 +453,14 @@ function startRepeatCheck() {
     } else {
       wordHint.textContent = "Try again!";
       buddy.classList.add("wrong");
-      speak("Try again");
+      speak("Almost. Try again.", { rate: 0.72, pitch: 1.22 });
     }
   };
 
   recognition.onerror = (event) => {
     wordHint.textContent = event.error === "not-allowed" ? "Allow microphone" : "Tap Repeat again";
     manualDoneBtn.classList.remove("hidden");
-    speak(event.error === "not-allowed" ? "Please allow microphone" : "Try again");
+    speak(event.error === "not-allowed" ? "Please allow microphone" : "Let's try again", { rate: 0.72, pitch: 1.22 });
   };
 
   recognition.onend = stopListeningState;
@@ -530,11 +565,11 @@ function renderSoundGame() {
       choice.classList.remove("happy", "wrong");
       if (choice.dataset.answer === "yes") {
         choice.classList.add("happy");
-        speak(`${choice.dataset.word}. Yes!`);
+        speak(`${choice.dataset.word}. Yes, nice listening!`, { rate: 0.74, pitch: 1.26 });
         addStar();
       } else {
         choice.classList.add("wrong");
-        speak("Try again");
+        speak("Almost. Listen again.", { rate: 0.72, pitch: 1.22 });
       }
     });
   });
@@ -599,12 +634,12 @@ function checkMatch(zone, incoming) {
     if (selectedDragWord) selectedDragWord.classList.remove("selected");
     selectedDragWord = null;
     if (word) markPracticed(word);
-    speak(`Yes, ${incoming}`);
+    speak(`Yes, ${incoming}. Well done!`, { rate: 0.74, pitch: 1.26 });
     addStar();
   } else {
     zone.classList.add("wrong");
     window.setTimeout(() => zone.classList.remove("wrong"), 350);
-    speak("Try again");
+    speak("Almost. Try again.", { rate: 0.72, pitch: 1.22 });
   }
 }
 
@@ -623,12 +658,12 @@ function renderMoleGame() {
         const word = currentLessonWords().find((item) => item.word === currentMoleTarget);
         mole.classList.add("happy");
         if (word) markPracticed(word);
-        speak(`Yes, ${currentMoleTarget}`);
+        speak(`Yes, ${currentMoleTarget}. You found it!`, { rate: 0.74, pitch: 1.26 });
         addStar();
         window.setTimeout(renderMoleGame, 700);
       } else {
         mole.classList.add("wrong");
-        speak("Listen again");
+        speak("Listen again.", { rate: 0.72, pitch: 1.22 });
       }
     });
   });
