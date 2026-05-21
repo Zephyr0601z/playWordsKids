@@ -95,6 +95,7 @@ let currentProfile = {
 let currentLessonIndex = 0;
 let practicedWords = new Set();
 let stars = 0;
+let courseCompleted = false;
 let selectedWord = lessons[0].words[0];
 let currentMoleTarget = selectedWord.word;
 let draggedMatch = null;
@@ -132,6 +133,8 @@ const repeatBtn = document.querySelector("#repeatBtn");
 const manualDoneBtn = document.querySelector("#manualDoneBtn");
 const rewardOverlay = document.querySelector("#rewardOverlay");
 const rewardText = document.querySelector("#rewardText");
+const courseCompleteOverlay = document.querySelector("#courseCompleteOverlay");
+const completeSummary = document.querySelector("#completeSummary");
 const homeLessonTag = document.querySelector("#homeLessonTag");
 const homeLessonTitle = document.querySelector("#homeLessonTitle");
 const homeLessonStatus = document.querySelector("#homeLessonStatus");
@@ -178,6 +181,7 @@ function saveProgress() {
       lesson: currentLessonIndex,
       stars,
       practiced: [...practicedWords],
+      completed: courseCompleted,
     })
   );
 }
@@ -186,6 +190,7 @@ function loadProgress() {
   currentLessonIndex = 0;
   stars = 0;
   practicedWords = new Set();
+  courseCompleted = false;
 
   const raw = localStorage.getItem(storageKey());
   if (!raw) return;
@@ -195,9 +200,11 @@ function loadProgress() {
     currentLessonIndex = Math.min(progress.lesson || 0, lessons.length - 1);
     stars = progress.stars || 0;
     practicedWords = new Set(progress.practiced || []);
+    courseCompleted = Boolean(progress.completed);
   } catch {
     currentLessonIndex = 0;
     practicedWords = new Set();
+    courseCompleted = false;
   }
 }
 
@@ -355,6 +362,22 @@ function showReward(word) {
   }, 1450);
 }
 
+function showCourseComplete() {
+  courseCompleted = true;
+  completeSummary.textContent = `You learned ${courseWords.length} words and finished ${lessons.length} lessons.`;
+  saveProgress();
+  courseCompleteOverlay.classList.remove("hidden");
+  courseCompleteOverlay.classList.remove("celebration-show");
+  requestAnimationFrame(() => courseCompleteOverlay.classList.add("celebration-show"));
+  speak("Wow. You finished all lessons. You are an English star!", { rate: 0.72, pitch: 1.3 });
+  window.setTimeout(() => speakChinese("全部课程完成啦，真棒！"), 2600);
+}
+
+function closeCourseComplete() {
+  courseCompleteOverlay.classList.add("hidden");
+  courseCompleteOverlay.classList.remove("celebration-show");
+}
+
 function completeSpokenWord() {
   wordHint.textContent = "You got it!";
   animateBuddy("happy");
@@ -506,9 +529,10 @@ function startRepeatCheck() {
 function updateLessonProgress() {
   const lessonWords = currentLessonWords();
   const done = lessonWords.filter((word) => practicedWords.has(word.word)).length;
+  const isFinalLesson = currentLessonIndex >= lessons.length - 1;
   lessonProgress.textContent = lessonMode === "review" ? "Review" : `${done}/${lessonWords.length}`;
-  nextLessonBtn.disabled = lessonMode === "review" || done < lessonWords.length || currentLessonIndex >= lessons.length - 1;
-  nextLessonBtn.textContent = lessonMode === "review" ? "Course" : currentLessonIndex >= lessons.length - 1 ? "Done" : "Next";
+  nextLessonBtn.disabled = lessonMode === "review" || done < lessonWords.length;
+  nextLessonBtn.textContent = lessonMode === "review" ? "Course" : isFinalLesson ? "Done" : "Next";
 
   document.querySelectorAll(".word-card").forEach((card) => {
     card.classList.toggle("learned", practicedWords.has(card.dataset.word));
@@ -818,12 +842,29 @@ document.querySelector("#reviewBtn").addEventListener("click", () => {
 nextLessonBtn.addEventListener("click", () => {
   if (nextLessonBtn.disabled) return;
   lessonMode = "course";
+  if (currentLessonIndex >= lessons.length - 1) {
+    showCourseComplete();
+    return;
+  }
   currentLessonIndex += 1;
   practicedWords = new Set();
+  courseCompleted = false;
   saveProgress();
   refreshGames();
   setActiveScreen("home");
   speak(`Lesson ${currentLessonIndex + 1}`);
+});
+
+document.querySelector("#celebrateAgainBtn").addEventListener("click", () => {
+  closeCourseComplete();
+  lessonMode = "review";
+  refreshGames();
+  setActiveScreen("lesson");
+});
+
+document.querySelector("#celebrateHomeBtn").addEventListener("click", () => {
+  closeCourseComplete();
+  setActiveScreen("home");
 });
 
 tabs.forEach((tab) => {
