@@ -1497,11 +1497,60 @@ function showMatchPlaneReward() {
   matchPlaneReward.classList.remove("hidden");
   matchPlaneReward.classList.remove("fly");
   requestAnimationFrame(() => matchPlaneReward.classList.add("fly"));
-  speak("Great match. The plane is flying high!", { rate: 0.72, pitch: 1.28 });
+  playJetTakeoffSound();
+  window.setTimeout(() => speak("Great match. Flying high!", { rate: 0.72, pitch: 1.28 }), 650);
   matchPlaneTimer = window.setTimeout(() => {
     matchPlaneReward.classList.add("hidden");
     matchPlaneReward.classList.remove("fly");
   }, 2600);
+}
+
+function playJetTakeoffSound() {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+
+  const audio = new AudioContext();
+  const now = audio.currentTime;
+  const master = audio.createGain();
+  master.gain.setValueAtTime(0.0001, now);
+  master.gain.exponentialRampToValueAtTime(0.22, now + 0.08);
+  master.gain.exponentialRampToValueAtTime(0.0001, now + 1.45);
+  master.connect(audio.destination);
+
+  const roar = audio.createOscillator();
+  const roarGain = audio.createGain();
+  roar.type = "sawtooth";
+  roar.frequency.setValueAtTime(80, now);
+  roar.frequency.exponentialRampToValueAtTime(360, now + 1.1);
+  roarGain.gain.setValueAtTime(0.16, now);
+  roarGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.35);
+  roar.connect(roarGain);
+  roarGain.connect(master);
+
+  const whooshBuffer = audio.createBuffer(1, audio.sampleRate * 1.2, audio.sampleRate);
+  const channel = whooshBuffer.getChannelData(0);
+  for (let index = 0; index < channel.length; index += 1) {
+    const fade = 1 - index / channel.length;
+    channel[index] = (Math.random() * 2 - 1) * fade;
+  }
+  const whoosh = audio.createBufferSource();
+  const whooshFilter = audio.createBiquadFilter();
+  const whooshGain = audio.createGain();
+  whoosh.buffer = whooshBuffer;
+  whooshFilter.type = "highpass";
+  whooshFilter.frequency.setValueAtTime(420, now);
+  whooshFilter.frequency.exponentialRampToValueAtTime(1800, now + 0.9);
+  whooshGain.gain.setValueAtTime(0.12, now);
+  whooshGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+  whoosh.connect(whooshFilter);
+  whooshFilter.connect(whooshGain);
+  whooshGain.connect(master);
+
+  roar.start(now);
+  roar.stop(now + 1.45);
+  whoosh.start(now);
+  whoosh.stop(now + 1.25);
+  window.setTimeout(() => audio.close(), 1600);
 }
 
 function maybeCompleteMatchRound() {
