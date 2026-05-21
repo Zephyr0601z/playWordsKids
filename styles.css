@@ -780,12 +780,12 @@ h1 {
 
 .lesson-steps {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 7px;
+  grid-template-columns: repeat(var(--lesson-count, 8), minmax(10px, 1fr));
+  gap: 5px;
 }
 
 .step-dot {
-  height: 12px;
+  height: 10px;
   border-radius: 999px;
   background: rgba(39, 49, 79, 0.16);
 }
@@ -1165,6 +1165,9 @@ h1 {
   overflow: hidden;
   padding: 20px;
   background:
+    radial-gradient(circle at 12% 18%, rgba(255, 212, 95, 0.78), transparent 18rem),
+    radial-gradient(circle at 88% 12%, rgba(143, 240, 189, 0.76), transparent 18rem),
+    radial-gradient(circle at 84% 88%, rgba(255, 126, 121, 0.26), transparent 16rem),
     linear-gradient(180deg, rgba(158, 231, 255, 0.94) 0%, rgba(255, 253, 247, 0.96) 68%),
     var(--white);
 }
@@ -1252,18 +1255,31 @@ h1 {
 
 .celebration-card {
   position: relative;
-  width: min(620px, calc(100vw - 36px));
+  width: min(760px, calc(100vw - 36px));
   display: grid;
   place-items: center;
-  gap: 14px;
-  padding: 28px;
+  gap: 12px;
+  padding: 28px 30px 30px;
   border: 4px solid rgba(255, 255, 255, 0.92);
   border-radius: 28px;
   text-align: center;
-  background: rgba(255, 253, 247, 0.94);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 253, 247, 0.96)),
+    var(--white);
   box-shadow: 0 30px 90px rgba(39, 49, 79, 0.24), inset 0 -10px 0 rgba(39, 49, 79, 0.07);
   transform: translateY(28px) scale(0.88);
   opacity: 0;
+}
+
+.celebration-card::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  right: 24px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--coral), var(--sun), #25ad6a, #1ba6f7, var(--berry));
 }
 
 .celebration-show .celebration-card {
@@ -1320,6 +1336,74 @@ h1 {
   color: var(--muted);
   font-size: 1.15rem;
   font-weight: 900;
+}
+
+.celebration-stats {
+  width: min(100%, 560px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.celebration-stats span {
+  min-height: 76px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 3px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 1000;
+  box-shadow: inset 0 -6px 0 rgba(39, 49, 79, 0.06);
+}
+
+.celebration-stats strong {
+  color: var(--ink);
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.final-word-parade {
+  width: min(100%, 620px);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 10px;
+  border-radius: 22px;
+  background: rgba(158, 231, 255, 0.24);
+}
+
+.final-word-parade span {
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border-radius: 16px;
+  text-align: left;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 0.98rem;
+  font-weight: 1000;
+  box-shadow: inset 0 -5px 0 rgba(39, 49, 79, 0.07);
+  animation: paradePop 1.4s ease-in-out infinite;
+}
+
+.final-word-parade span:nth-child(2n) {
+  animation-delay: 0.25s;
+}
+
+.final-word-parade span:nth-child(3n) {
+  animation-delay: 0.45s;
+}
+
+.final-word-parade b {
+  font-size: 1.45rem;
+  line-height: 1;
 }
 
 .badge-row {
@@ -1470,6 +1554,12 @@ h1 {
   100% {
     opacity: 1;
     transform: translateY(0) scale(1) rotate(0);
+  }
+}
+
+@keyframes paradePop {
+  50% {
+    transform: translateY(-4px);
   }
 }
 
@@ -1646,6 +1736,10 @@ h1 {
     align-items: stretch;
   }
 
+  .lesson-steps {
+    grid-template-columns: repeat(10, 1fr);
+  }
+
   .word-card-grid {
     grid-template-columns: 1fr;
   }
@@ -1712,5 +1806,30 @@ h1 {
 
   .celebration-actions {
     grid-template-columns: 1fr;
+  }
+
+  .celebration-stats {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 7px;
+  }
+
+  .celebration-stats span {
+    min-height: 62px;
+    border-radius: 16px;
+    font-size: 0.78rem;
+  }
+
+  .celebration-stats strong {
+    font-size: 1.28rem;
+  }
+
+  .final-word-parade {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 7px;
+  }
+
+  .final-word-parade span {
+    min-height: 48px;
+    font-size: 0.86rem;
   }
 }

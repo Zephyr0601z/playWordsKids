@@ -168,16 +168,7 @@
                 </div>
                 <div id="lessonProgress" class="lesson-progress">0/4</div>
               </div>
-              <div class="lesson-steps" aria-label="lesson steps">
-                <span class="step-dot active"></span>
-                <span class="step-dot"></span>
-                <span class="step-dot"></span>
-                <span class="step-dot"></span>
-                <span class="step-dot"></span>
-                <span class="step-dot"></span>
-                <span class="step-dot"></span>
-                <span class="step-dot"></span>
-              </div>
+              <div id="lessonSteps" class="lesson-steps" aria-label="lesson steps"></div>
               <div id="wordCards" class="word-card-grid"></div>
             </article>
           </div>
@@ -241,7 +232,13 @@
           </div>
           <p class="celebration-kicker">Course Complete</p>
           <h2>You are an English Star!</h2>
-          <p id="completeSummary">You learned 32 words.</p>
+          <p id="completeSummary">You learned 80 words.</p>
+          <div class="celebration-stats" aria-label="course results">
+            <span><strong id="completeWordCount">80</strong> Words</span>
+            <span><strong id="completeLessonCount">20</strong> Lessons</span>
+            <span><strong id="completeStarCount">0</strong> Stars</span>
+          </div>
+          <div id="finalWordParade" class="final-word-parade" aria-label="favorite learned words"></div>
           <div class="badge-row" aria-hidden="true">
             <span>Listen</span>
             <span>Speak</span>

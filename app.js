@@ -31,6 +31,54 @@ const courseWords = [
   { word: "Chair", zh: "椅子", action: "wag", emoji: "🪑", letter: "C", sound: "c" },
   { word: "Lamp", zh: "台灯", action: "jump", emoji: "💡", letter: "L", sound: "l" },
   { word: "Toy", zh: "玩具", action: "wag", emoji: "🧸", letter: "T", sound: "t" },
+  { word: "Red", zh: "红色", action: "jump", emoji: "🔴", letter: "R", sound: "r", phrase: "red apple", scene: "The apple is red.", rhyme: "Red, red, touch your head." },
+  { word: "Blue", zh: "蓝色", action: "swim", emoji: "🔵", letter: "B", sound: "b", phrase: "blue sky", scene: "The sky is blue.", rhyme: "Blue, blue, I see you." },
+  { word: "Yellow", zh: "黄色", action: "jump", emoji: "🟡", letter: "Y", sound: "y", phrase: "yellow sun", scene: "The sun is yellow.", rhyme: "Yellow, yellow, soft and mellow." },
+  { word: "Green", zh: "绿色", action: "wag", emoji: "🟢", letter: "G", sound: "g", phrase: "green leaf", scene: "The leaf is green.", rhyme: "Green, green, nice and clean." },
+  { word: "One", zh: "一", action: "jump", emoji: "1️⃣", letter: "O", sound: "o", phrase: "one ball", scene: "I have one ball.", rhyme: "One, one, learning is fun." },
+  { word: "Two", zh: "二", action: "wag", emoji: "2️⃣", letter: "T", sound: "t", phrase: "two eyes", scene: "I have two eyes.", rhyme: "Two, two, me and you." },
+  { word: "Three", zh: "三", action: "flap", emoji: "3️⃣", letter: "T", sound: "th", phrase: "three birds", scene: "I see three birds.", rhyme: "Three, three, count with me." },
+  { word: "Four", zh: "四", action: "swim", emoji: "4️⃣", letter: "F", sound: "f", phrase: "four fish", scene: "I see four fish.", rhyme: "Four, four, open the door." },
+  { word: "Mom", zh: "妈妈", action: "wag", emoji: "👩", letter: "M", sound: "m", phrase: "my mom", scene: "I love Mom.", rhyme: "Mom, mom, sing a song." },
+  { word: "Dad", zh: "爸爸", action: "jump", emoji: "👨", letter: "D", sound: "d", phrase: "my dad", scene: "I love Dad.", rhyme: "Dad, dad, clap like that." },
+  { word: "Baby", zh: "宝宝", action: "swim", emoji: "👶", letter: "B", sound: "b", phrase: "little baby", scene: "The baby smiles.", rhyme: "Baby, baby, wave to me." },
+  { word: "Home", zh: "家", action: "jump", emoji: "🏠", letter: "H", sound: "h", phrase: "go home", scene: "I go home.", rhyme: "Home, home, warm as foam." },
+  { word: "Head", zh: "头", action: "jump", emoji: "🙂", letter: "H", sound: "h", phrase: "my head", scene: "Touch your head.", rhyme: "Head, head, nod your head." },
+  { word: "Eye", zh: "眼睛", action: "wag", emoji: "👁️", letter: "E", sound: "e", phrase: "one eye", scene: "I see with my eyes.", rhyme: "Eye, eye, look up high." },
+  { word: "Nose", zh: "鼻子", action: "swim", emoji: "👃", letter: "N", sound: "n", phrase: "my nose", scene: "Touch your nose.", rhyme: "Nose, nose, smell a rose." },
+  { word: "Hand", zh: "手", action: "wag", emoji: "✋", letter: "H", sound: "h", phrase: "my hand", scene: "Wave your hand.", rhyme: "Hand, hand, make a band." },
+  { word: "Happy", zh: "开心", action: "jump", emoji: "😊", letter: "H", sound: "h", phrase: "feel happy", scene: "I am happy.", rhyme: "Happy, happy, tap, tap, tap." },
+  { word: "Sad", zh: "难过", action: "swim", emoji: "😢", letter: "S", sound: "s", phrase: "feel sad", scene: "I feel sad.", rhyme: "Sad, sad, hug Mom and Dad." },
+  { word: "Tired", zh: "累了", action: "swim", emoji: "🥱", letter: "T", sound: "t", phrase: "feel tired", scene: "I am tired.", rhyme: "Tired, tired, rest your head." },
+  { word: "Funny", zh: "有趣", action: "jump", emoji: "😄", letter: "F", sound: "f", phrase: "so funny", scene: "This is funny.", rhyme: "Funny, funny, sunny day." },
+  { word: "Hat", zh: "帽子", action: "jump", emoji: "🧢", letter: "H", sound: "h", phrase: "a blue hat", scene: "I wear a hat.", rhyme: "Hat, hat, pat your hat." },
+  { word: "Shoes", zh: "鞋子", action: "wag", emoji: "👟", letter: "S", sound: "sh", phrase: "my shoes", scene: "I wear shoes.", rhyme: "Shoes, shoes, choose your shoes." },
+  { word: "Coat", zh: "外套", action: "swim", emoji: "🧥", letter: "C", sound: "c", phrase: "a warm coat", scene: "I wear a coat.", rhyme: "Coat, coat, button your coat." },
+  { word: "Socks", zh: "袜子", action: "wag", emoji: "🧦", letter: "S", sound: "s", phrase: "warm socks", scene: "These are my socks.", rhyme: "Socks, socks, tick tock." },
+  { word: "Sun", zh: "太阳", action: "jump", emoji: "☀️", letter: "S", sound: "s", phrase: "bright sun", scene: "The sun is up.", rhyme: "Sun, sun, run in the sun." },
+  { word: "Rain", zh: "雨", action: "swim", emoji: "🌧️", letter: "R", sound: "r", phrase: "soft rain", scene: "I hear the rain.", rhyme: "Rain, rain, tap the pane." },
+  { word: "Wind", zh: "风", action: "flap", emoji: "💨", letter: "W", sound: "w", phrase: "strong wind", scene: "The wind blows.", rhyme: "Wind, wind, spin and grin." },
+  { word: "Snow", zh: "雪", action: "swim", emoji: "❄️", letter: "S", sound: "s", phrase: "white snow", scene: "I see snow.", rhyme: "Snow, snow, soft and slow." },
+  { word: "Circle", zh: "圆形", action: "swim", emoji: "⭕", letter: "C", sound: "c", phrase: "a big circle", scene: "This is a circle.", rhyme: "Circle, circle, round we go." },
+  { word: "Star", zh: "星星", action: "jump", emoji: "⭐", letter: "S", sound: "s", phrase: "bright star", scene: "I see a star.", rhyme: "Star, star, shine afar." },
+  { word: "Square", zh: "正方形", action: "wag", emoji: "◼️", letter: "S", sound: "s", phrase: "a small square", scene: "This is a square.", rhyme: "Square, square, draw it there." },
+  { word: "Heart", zh: "爱心", action: "jump", emoji: "❤️", letter: "H", sound: "h", phrase: "red heart", scene: "I see a heart.", rhyme: "Heart, heart, love is art." },
+  { word: "Pen", zh: "笔", action: "wag", emoji: "🖊️", letter: "P", sound: "p", phrase: "a blue pen", scene: "I use a pen.", rhyme: "Pen, pen, write again." },
+  { word: "Bag", zh: "书包", action: "jump", emoji: "🎒", letter: "B", sound: "b", phrase: "my school bag", scene: "This is my bag.", rhyme: "Bag, bag, tag your bag." },
+  { word: "Desk", zh: "课桌", action: "swim", emoji: "🧑‍🏫", letter: "D", sound: "d", phrase: "my desk", scene: "I sit at my desk.", rhyme: "Desk, desk, do your best." },
+  { word: "Teacher", zh: "老师", action: "flap", emoji: "👩‍🏫", letter: "T", sound: "t", phrase: "my teacher", scene: "Hello, teacher.", rhyme: "Teacher, teacher, help me learn." },
+  { word: "Tree", zh: "树", action: "flap", emoji: "🌳", letter: "T", sound: "t", phrase: "a tall tree", scene: "I see a tree.", rhyme: "Tree, tree, wave with me." },
+  { word: "Flower", zh: "花", action: "wag", emoji: "🌸", letter: "F", sound: "f", phrase: "a pink flower", scene: "The flower is pretty.", rhyme: "Flower, flower, smell the flower." },
+  { word: "Moon", zh: "月亮", action: "swim", emoji: "🌙", letter: "M", sound: "m", phrase: "the moon", scene: "The moon is bright.", rhyme: "Moon, moon, see you soon." },
+  { word: "Sea", zh: "大海", action: "swim", emoji: "🌊", letter: "S", sound: "s", phrase: "blue sea", scene: "I see the sea.", rhyme: "Sea, sea, splash with me." },
+  { word: "Car", zh: "汽车", action: "swim", emoji: "🚗", letter: "C", sound: "c", phrase: "a red car", scene: "The car can go.", rhyme: "Car, car, near and far." },
+  { word: "Bus", zh: "公交车", action: "wag", emoji: "🚌", letter: "B", sound: "b", phrase: "a big bus", scene: "I ride a bus.", rhyme: "Bus, bus, ride with us." },
+  { word: "Train", zh: "火车", action: "swim", emoji: "🚆", letter: "T", sound: "t", phrase: "a long train", scene: "The train is fast.", rhyme: "Train, train, down the lane." },
+  { word: "Plane", zh: "飞机", action: "flap", emoji: "✈️", letter: "P", sound: "p", phrase: "a big plane", scene: "The plane can fly.", rhyme: "Plane, plane, fly again." },
+  { word: "Hello", zh: "你好", action: "wag", emoji: "👋", letter: "H", sound: "h", phrase: "say hello", scene: "Hello, my friend.", rhyme: "Hello, hello, off we go." },
+  { word: "Please", zh: "请", action: "jump", emoji: "🙏", letter: "P", sound: "p", phrase: "please help", scene: "Please help me.", rhyme: "Please, please, say it with ease." },
+  { word: "Thanks", zh: "谢谢", action: "wag", emoji: "💛", letter: "T", sound: "th", phrase: "say thanks", scene: "Thanks, Mom.", rhyme: "Thanks, thanks, big happy thanks." },
+  { word: "Bye", zh: "再见", action: "flap", emoji: "👋", letter: "B", sound: "b", phrase: "say bye", scene: "Bye, see you.", rhyme: "Bye, bye, wave to the sky." },
 ];
 
 const wordExpressions = {
@@ -77,10 +125,22 @@ const lessonTitles = [
   "Snack Time",
   "I Can Do It",
   "Around Home",
+  "Rainbow Colors",
+  "First Numbers",
+  "My Family",
+  "My Body",
+  "My Feelings",
+  "My Clothes",
+  "Weather Day",
+  "Shapes I See",
+  "School Time",
+  "Nature Walk",
+  "Things That Go",
+  "Polite Words",
 ];
 
 const lessons = Array.from({ length: Math.ceil(courseWords.length / 4) }, (_, index) => ({
-  title: lessonTitles[index],
+  title: lessonTitles[index] || `Lesson ${index + 1}`,
   words: courseWords.slice(index * 4, index * 4 + 4),
 }));
 
@@ -128,6 +188,7 @@ const wordCards = document.querySelector("#wordCards");
 const lessonTag = document.querySelector("#lessonTag");
 const lessonTitle = document.querySelector("#lessonTitle");
 const lessonProgress = document.querySelector("#lessonProgress");
+const lessonSteps = document.querySelector("#lessonSteps");
 const nextLessonBtn = document.querySelector("#nextLessonBtn");
 const repeatBtn = document.querySelector("#repeatBtn");
 const manualDoneBtn = document.querySelector("#manualDoneBtn");
@@ -135,6 +196,10 @@ const rewardOverlay = document.querySelector("#rewardOverlay");
 const rewardText = document.querySelector("#rewardText");
 const courseCompleteOverlay = document.querySelector("#courseCompleteOverlay");
 const completeSummary = document.querySelector("#completeSummary");
+const completeWordCount = document.querySelector("#completeWordCount");
+const completeLessonCount = document.querySelector("#completeLessonCount");
+const completeStarCount = document.querySelector("#completeStarCount");
+const finalWordParade = document.querySelector("#finalWordParade");
 const homeLessonTag = document.querySelector("#homeLessonTag");
 const homeLessonTitle = document.querySelector("#homeLessonTitle");
 const homeLessonStatus = document.querySelector("#homeLessonStatus");
@@ -328,11 +393,13 @@ function heardTarget(transcript, target) {
 }
 
 function getWordExpression(word) {
-  return wordExpressions[word.word] || {
-    phrase: `a ${word.word.toLowerCase()}`,
-    scene: `I see a ${word.word.toLowerCase()}.`,
-    rhyme: `${word.word}, ${word.word}, say it with me.`,
-  };
+  return (
+    wordExpressions[word.word] || {
+      phrase: word.phrase || `a ${word.word.toLowerCase()}`,
+      scene: word.scene || `I see a ${word.word.toLowerCase()}.`,
+      rhyme: word.rhyme || `${word.word}, ${word.word}, say it with me.`,
+    }
+  );
 }
 
 function setRepeatButtonLabel() {
@@ -365,6 +432,12 @@ function showReward(word) {
 function showCourseComplete() {
   courseCompleted = true;
   completeSummary.textContent = `You learned ${courseWords.length} words and finished ${lessons.length} lessons.`;
+  completeWordCount.textContent = courseWords.length;
+  completeLessonCount.textContent = lessons.length;
+  completeStarCount.textContent = stars;
+  finalWordParade.innerHTML = sample(courseWords, 8)
+    .map((word) => `<span><b>${word.emoji}</b>${word.word}</span>`)
+    .join("");
   saveProgress();
   courseCompleteOverlay.classList.remove("hidden");
   courseCompleteOverlay.classList.remove("celebration-show");
@@ -537,6 +610,9 @@ function updateLessonProgress() {
   document.querySelectorAll(".word-card").forEach((card) => {
     card.classList.toggle("learned", practicedWords.has(card.dataset.word));
   });
+
+  lessonSteps.innerHTML = lessons.map(() => '<span class="step-dot"></span>').join("");
+  lessonSteps.style.setProperty("--lesson-count", lessons.length);
 
   document.querySelectorAll(".step-dot").forEach((dot, index) => {
     dot.classList.toggle("active", index === currentLessonIndex);
